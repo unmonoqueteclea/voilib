@@ -1,0 +1,18 @@
+# Copyright (c) 2022-2023 Pablo González Carrizo
+# All rights reserved.
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+markers = []
+# set this to true if you need to debug something in the tests
+log_cli = false
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+# filter a deprecation warning raised by a Tensorflow dependency
+filterwarnings = ["ignore:the imp module is deprecated:DeprecationWarning"]
+
+env = ["ENVIRONMENT=test"]

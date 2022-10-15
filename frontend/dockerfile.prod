@@ -1,0 +1,21 @@
+FROM node:19-slim as build-stage
+ARG API_HOST
+
+WORKDIR /frontend
+# we need curl for the healthcheck
+RUN apt-get update &&\
+    apt-get install --no-install-recommends -y curl &&\
+    rm -rf /var/lib/apt/lists/*
+COPY ./package.json ./package.json
+COPY ./package-lock.json ./package-lock.json
+COPY ./ .
+ENV VITE_API_HOST=${API_HOST}
+RUN npm install && npm run build
+
+# production stage
+FROM nginx:stable-alpine as production-stage
+COPY ./nginx.conf /etc/nginx/nginx.conf
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=build-stage /frontend/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

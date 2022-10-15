@@ -1,0 +1,19 @@
+FROM node:19-slim
+
+WORKDIR /frontend
+
+# we need curl for the healthcheck
+RUN apt-get update &&\
+    apt-get install --no-install-recommends -y curl &&\
+    rm -rf /var/lib/apt/lists/*
+
+COPY ./package.json ./package.json
+COPY ./package-lock.json ./package-lock.json
+
+RUN npm install
+
+COPY ./ .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev"]

@@ -1,0 +1,30 @@
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+    [entryPoints.web.http.redirections.entryPoint]
+      to = "websecure"
+      scheme = "https"
+  [entryPoints.websecure]
+    address = ":443"
+
+# traefik dashboard over http
+[api]
+insecure = true
+
+[log]
+level = "INFO"
+
+[ping]
+
+[accessLog]
+
+# containers are not discovered automatically
+[providers]
+  [providers.docker]
+    exposedByDefault = false
+
+
+[certificatesResolvers.myresolver.acme]
+  email = "admin@voilib.com"
+  storage = "/cert/acme.json"
+  [certificatesResolvers.myresolver.acme.tlsChallenge]

@@ -1,0 +1,124 @@
+version: "3.9"
+
+x-defaults: &defaults
+  logging:
+    driver: "json-file"
+    options:
+      max-file: 5
+      max-size: 10m
+
+services:
+  traefik:
+    <<: *defaults
+    image: traefik:v2.9
+    ports:
+      - 80:80   # the app is served in this port
+      - 443:443  # for https
+    volumes:
+      - "./traefik.prod.toml:/etc/traefik/traefik.toml"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./cert:/cert/"
+    healthcheck:
+      test: traefik healthcheck
+      interval: 10s
+      timeout: 1s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  redis:
+    <<: *defaults
+    image: redis:7.0.4-alpine
+    hostname: ${REDIS_HOST}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  backend:
+    <<: *defaults
+    image: voilib-backend:latest
+    build:
+      context: ../../backend
+      dockerfile: dockerfile
+      args:
+        INSTALL_DEV: false
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env.prod
+    expose:
+      - 80  # we do not want to publish this port, as we will access through traefik
+    command:  uvicorn src.voilib.main:app --proxy-headers --host 0.0.0.0 --root-path /service --port 80
+    volumes:
+      - ../../data-production/:/data/
+    labels:
+      - "traefik.enable=true"
+      # expose the backend in the /service endpoint
+      - "traefik.http.routers.api.rule=(Host(`voilib.com`) && PathPrefix(`/service`))"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls.certresolver=myresolver"
+      - "traefik.http.routers.api.middlewares=api"
+      - "traefik.http.middlewares.api.stripprefix.prefixes=/service"
+      - "traefik.port=80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "0.0.0.0/app/version"]
+      interval: 6s
+      timeout: 10s
+      retries: 50
+    deploy:
+      mode: replicated
+      replicas: 3
+    restart: unless-stopped
+
+  worker:
+    <<: *defaults
+    image: voilib-worker:latest
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env.prod
+    build:
+      context: ../../backend
+      dockerfile: dockerfile
+      args:
+        INSTALL_DEV: false
+    volumes:
+      - ../../data-production/:/data/
+    restart: unless-stopped
+
+  frontend:
+    <<: *defaults
+    image: voilib-ui:latest
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file:
+      - .env.prod
+    expose:
+      - 80 # expose the port just internally, as we are using traefik
+    build:
+      context: ../../frontend
+      dockerfile: dockerfile.prod
+      args:
+        API_HOST: ${VITE_API_HOST:?err}
+    volumes:
+      - node_modules:/frontend/node_modules/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ui.rule=(Host(`voilib.com`) && PathPrefix(`/`))"
+      - "traefik.http.routers.ui.entrypoints=websecure"
+      - "traefik.http.routers.ui.tls.certresolver=myresolver"
+      - "traefik.port=80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "0.0.0.0"]
+      interval: 6s
+      timeout: 10s
+      retries: 50
+
+volumes:
+  node_modules:
