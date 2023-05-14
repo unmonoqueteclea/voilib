@@ -8,7 +8,7 @@ import csv
 import functools
 import logging
 import pathlib
-
+import time
 import jax.numpy as jnp
 from whisper_jax import FlaxWhisperPipline
 
@@ -40,9 +40,11 @@ def transcribe(audio: pathlib.Path) -> Transcription:
     (start_time [float], end_time [float], transcription [str])
     """
     logger.info(f"start transcription of file {audio}")
+    start_time = time.time()
     pipeline = _get_pipeline()
     output = pipeline(str(audio), task="transcribe", return_timestamps=True)
-    logger.info(f"end transcription of file {audio}")
+    end_time = time.time()
+    logger.info(f"end transcription of file {audio} in {end_time-start_time}")
     return [(*c["timestamp"], c["text"]) for c in output["chunks"]]  # type: ignore
 
 

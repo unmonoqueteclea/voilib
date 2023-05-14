@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class Environment(enum.Enum):
     test = "test"
     development = "development"
-    prodduction = "production"
+    production = "production"
 
 
 class Settings(pydantic.BaseSettings):

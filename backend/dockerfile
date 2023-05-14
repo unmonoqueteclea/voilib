@@ -10,8 +10,9 @@ ENV PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /backend
 # we need curl for the healthchecks, build-essential to build hnswlib
+# we need ffmpeg to load audios
 RUN apt-get update &&\
-    apt-get install --no-install-recommends -y curl git build-essential &&\
+    apt-get install --no-install-recommends -y curl ffmpeg git build-essential &&\
     rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt /backend/requirements.txt

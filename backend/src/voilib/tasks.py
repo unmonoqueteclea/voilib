@@ -80,7 +80,7 @@ async def store_episodes_embeddings() -> None:
     logger.info("storing all pending episodes in vector database")
     client = vector.get_client(path=str(storage.vectordb_path()))
     model = embedding.load_embeddings_model(embedding.DEFAULT_EMBEDDINGS_MODEL)
-    vector.create_collection(client, vector.DEFAULT_COLLECTION, model)
+    vector.ensure_collection(client, vector.DEFAULT_COLLECTION, model)
     episodes = await models.Episode.objects.filter(
         transcribed=True, embeddings=False
     ).all()

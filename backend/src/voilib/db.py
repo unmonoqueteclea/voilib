@@ -27,7 +27,9 @@ def get_db_url() -> str:
         return f"{base}/db-dev.sqlite"
     elif curset.environment == settings.Environment.test.value:
         return f"{base}/db-test.sqlite"
-    return f"{base}/db-prod.sqlite"
+    elif curset.environment == settings.Environment.production.value:
+        return f"{base}/db-prod.sqlite"
+    raise ValueError(f"invalid environment value {curset.environment}")
 
 
 database = databases.Database(get_db_url())

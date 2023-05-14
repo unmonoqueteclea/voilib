@@ -9,6 +9,7 @@ from typing import Optional, Union
 import pathlib
 import qdrant_client
 from qdrant_client import models
+import logging
 import sentence_transformers
 from voilib import embedding
 from voilib.models import Episode
@@ -17,6 +18,8 @@ from functools import cache
 from typing import NamedTuple
 
 DEFAULT_COLLECTION: str = "vectordb"
+
+logger = logging.getLogger(__name__)
 
 
 class QueryResponse(NamedTuple):
@@ -67,8 +70,12 @@ def ensure_collection(
     collection_name: str,
     embeddings_model: sentence_transformers.SentenceTransformer,
 ):
-    found = [c for c in client.get_collections() if c == collection_name]
+    logger.info(f"trying to find collection {collection_name}")
+    collections = client.get_collections().collections
+    logger.info(f"available collections: {collections}")
+    found = [c for c in collections if c.name == collection_name]
     if not found:
+        logger.info("collection not found, creating it")
         create_collection(client, collection_name, embeddings_model)
     return
 
