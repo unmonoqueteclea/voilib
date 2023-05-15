@@ -5,6 +5,7 @@
 database.
 """
 
+import functools
 from typing import Optional, Union
 import pathlib
 import qdrant_client
@@ -31,6 +32,7 @@ class QueryResponse(NamedTuple):
     text: str
 
 
+@functools.cache
 def get_client(
     host: Optional[str] = None,
     port: Optional[int] = None,
@@ -41,6 +43,7 @@ def get_client(
     if a path is given or just in memory if no argument is provided.
 
     """
+    logger.info(f"obtaining qdrant client {host} {port} {path}")
     if host and port:
         return qdrant_client.QdrantClient(host=host, port=port)
     elif path:
