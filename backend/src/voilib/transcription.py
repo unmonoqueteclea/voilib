@@ -58,11 +58,15 @@ def store_transcription(transcription: Transcription, path: pathlib.Path) -> Non
 
 def read_transcription(path: pathlib.Path) -> Transcription:
     """Read a transcription from a given path"""
-    rows = None
+    rows = []
     with path.open() as csvfile:
         reader = csv.reader(csvfile, delimiter="|")
-        rows = [(float(row[0]), float(row[1]), row[2]) for row in reader]
-    return rows  # type: ignore
+        for row in reader:
+            start = float(row[0])
+            # sometimes the end is not defined
+            end = float(row[1]) if len(row[1])>0 else start
+            rows.append((start,end,row[2]))
+    return rows
 
 
 async def transcribe_episode(episode: media.Episode) -> pathlib.Path:
