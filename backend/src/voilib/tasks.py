@@ -12,7 +12,6 @@ from voilib import (
     collection,
     embedding,
     vector,
-    storage,
 )
 from datetime import datetime, timedelta
 import random
@@ -78,7 +77,7 @@ async def store_episode_embeddings(
 async def store_episodes_embeddings() -> None:
     """Store pending episodes embeddings in the vector database"""
     logger.info("storing all pending episodes in vector database")
-    client = vector.get_client(path=str(storage.vectordb_path()))
+    client = vector.get_configured_client()
     model = embedding.load_embeddings_model(embedding.DEFAULT_EMBEDDINGS_MODEL)
     vector.ensure_collection(client, vector.DEFAULT_COLLECTION, model)
     episodes = await models.Episode.objects.filter(
@@ -94,7 +93,7 @@ async def store_episodes_embeddings() -> None:
 
 def search(text: str) -> list[vector.QueryResponse]:
     model = embedding.load_embeddings_model(embedding.DEFAULT_EMBEDDINGS_MODEL)
-    client = vector.get_client(path=str(storage.vectordb_path()))
+    client = vector.get_configured_client()
     query = embedding.text2embedding(text, model)
     results = vector.search(client, query, vector.DEFAULT_COLLECTION, 8)
     return results

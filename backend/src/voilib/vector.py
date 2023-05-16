@@ -12,7 +12,7 @@ import qdrant_client
 from qdrant_client import models
 import logging
 import sentence_transformers
-from voilib import embedding
+from voilib import embedding, settings, storage
 from voilib.models import Episode
 import uuid
 from functools import cache
@@ -43,12 +43,22 @@ def get_client(
     if a path is given or just in memory if no argument is provided.
 
     """
-    logger.info(f"obtaining qdrant client {host} {port} {path}")
+    logger.info(f"obtaining qdrant client {host=} {port=} {path=}")
     if host and port:
         return qdrant_client.QdrantClient(host=host, port=port)
     elif path:
         return qdrant_client.QdrantClient(path=str(path))
     return qdrant_client.QdrantClient(":memory:")
+
+
+@functools.cache
+def get_configured_client() -> qdrant_client.QdrantClient:
+    """Return the vector database client configured in app settings."""
+    if settings.settings.qdrant_use_file:
+        return get_client(path=storage.vectordb_path())
+    return get_client(
+        host=settings.settings.qdrant_host, port=settings.settings.qdrant_port
+    )
 
 
 def create_collection(

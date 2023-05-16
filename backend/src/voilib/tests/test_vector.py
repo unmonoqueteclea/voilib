@@ -22,7 +22,7 @@ async def test_store_embeddings(fake_episode):
     embedding.load_embeddings_model(embedding.DEFAULT_EMBEDDINGS_MODEL)
     client = vector.get_client()
 
-    # load episode and calculate its embeddigns
+    # load episode and calculate its embeddings
     tr = transcription.read_transcription(
         await storage.transcription_file(fake_episode)
     )

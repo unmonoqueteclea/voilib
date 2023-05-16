@@ -35,6 +35,14 @@ services:
       timeout: 3s
       retries: 30
 
+  qdrant:
+    <<: *defaults
+    image: qdrant/qdrant:v1.1.3
+    expose:
+      - 6333
+    volumes:
+      - ../../data/qdrant/:/qdrant/storage
+
   backend:
     <<: *defaults
     image: voilib-backend:latest
@@ -85,14 +93,6 @@ services:
     volumes:
       - ../../backend/:/backend/
       - ../../data/:/data/
-
-  monitor:
-    <<: *defaults
-    image: pranavgupta1234/rqmonitor
-    environment:
-      RQ_MONITOR_REDIS_URL: redis://redis:6379
-    ports:
-      - 8899:8899
 
   frontend:
     <<: *defaults

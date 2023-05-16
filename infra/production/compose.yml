@@ -37,6 +37,14 @@ services:
       retries: 30
     restart: unless-stopped
 
+  qdrant:
+    <<: *defaults
+    image: qdrant/qdrant:v1.1.3
+    expose:
+      - 6333
+    volumes:
+      - ../../data-production/qdrant/:/qdrant/storage
+
   backend:
     <<: *defaults
     image: voilib-backend:latest

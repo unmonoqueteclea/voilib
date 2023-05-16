@@ -34,8 +34,10 @@ class Settings(pydantic.BaseSettings):
     repo_dir: pydantic.DirectoryPath = REPO_DIR
     media_folder_name: str = "media"
     redis_host: str = "redis"
-    # this user, during creation, will be automatically assigned admin
-    # priviledges
+    qdrant_host: str = "qdrant"
+    qdrant_port: int = 6333
+    # this user, during creation, will be automatically assigned
+    # admin privileges
     admin_username: str = "voilib-admin"
     # you can generate it with: openssl rand -hex 32
     secret_key: str = ""
@@ -45,6 +47,10 @@ class Settings(pydantic.BaseSettings):
         if self.environment == Environment.test.value:
             return self.repo_dir / "data-test"
         return self.repo_dir / "data"
+
+    @property
+    def qdrant_use_file(self) -> bool:
+        return self.environment == Environment.test.value
 
 
 def create_queue(settings: Settings) -> Queue:
