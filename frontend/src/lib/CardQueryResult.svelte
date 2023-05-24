@@ -45,7 +45,7 @@
       </div>
     </div>
     <div class="flex flex-col ml-3">
-      <a href={result.channel.url}>
+      <a href={result.channel.url} target="_blank">
 	<h3 class="text-lg font-bold">{result.channel.title}</h3>
       </a>
       <p class="text-sm">

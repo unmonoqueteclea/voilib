@@ -1,7 +1,8 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
-"""Analytics related models such us queries performed by users.
+"""Analytics related models to store things such us queries performed
+by users.
 
 """
 import ormar

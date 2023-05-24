@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """ File storage related functions
@@ -13,7 +13,6 @@ from voilib.models import media
 from voilib import settings
 from voilib.utils import slugify
 
-MEDIA_FOLDER = settings.settings.data_dir / settings.settings.media_folder_name
 DEFAULT_EPISODES_SUFFIX: str = "mp3"
 
 logger = logging.getLogger(__name__)
@@ -21,7 +20,10 @@ logger = logging.getLogger(__name__)
 
 @functools.cache
 def vectordb_path() -> pathlib.Path:
-    """Return the path of the vector database"""
+    """Return the path of the vector database, for cases when we use a
+    file to store it (usually, in tests).
+
+    """
     path = settings.settings.data_dir / "vector"
     path.mkdir(exist_ok=True)
     return path
@@ -30,7 +32,7 @@ def vectordb_path() -> pathlib.Path:
 def channel_path(channel: media.Channel) -> pathlib.Path:
     """Return the path where channel media files should be stored."""
     fname = f"{slugify(channel.title[:30])}-{slugify(channel.feed[-10:])}"
-    return MEDIA_FOLDER / fname
+    return settings.settings.media_folder / fname
 
 
 async def episode_file(
@@ -66,6 +68,6 @@ async def download_episode(episode: media.Episode) -> pathlib.Path:
 
     If it already exists, just return it.
     """
-    logger.info(f"trying to download episode {episode.pk}: {episode.id}")
+    logger.info(f"checking if we need to download episode {episode.id}")
     audio = await episode_file(episode, create_channel_folder=True)
     return audio if audio.exists() else (await fetch_file(episode.url, audio))

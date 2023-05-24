@@ -1,4 +1,4 @@
 .env
 data/
-data-test/
+!backend/src/voilib/tests/data/
 pyrightconfig.json

@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 import logging
@@ -9,7 +9,7 @@ from fastapi_pagination.ext.ormar import paginate
 
 from voilib import auth
 from voilib.models import analytics, media, users
-from voilib.schemas import analytics as analytics_sc
+from voilib.schemas import analytics as analytics_schemas
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/analytics", tags=["analytics"])
@@ -18,9 +18,9 @@ router = APIRouter(prefix="/analytics", tags=["analytics"])
 @router.get(
     "/query-history",
     summary="Individual user queries",
-    response_model=Page[analytics_sc.QueryOut],
+    response_model=Page[analytics_schemas.QueryOut],
 )
-async def queries(
+async def _queries(
     admin: users.User = Depends(auth.get_current_admin_user),
 ):
     qs = analytics.Query.objects.order_by("-created_at")
@@ -29,8 +29,8 @@ async def queries(
 
 @router.get(
     "/media-count",
-    summary="Analytics about number of channels and episodes in the applciation",
-    response_model=analytics_sc.MediaAnalytics,
+    summary="Analytics about number of channels and episodes in the app",
+    response_model=analytics_schemas.MediaAnalytics,
 )
 async def _media():
     dbchannels = await media.Channel.objects.order_by("title").all()
@@ -38,7 +38,7 @@ async def _media():
     for channel in dbchannels:
         eps = channel.episodes
         channels.append(
-            analytics_sc.ChannelAnalytics(
+            analytics_schemas.ChannelAnalytics(
                 title=channel.title,
                 image=channel.image,
                 url=channel.url,
@@ -46,6 +46,6 @@ async def _media():
                 available_episodes=await eps.filter(embeddings=True).count(),
             )
         )
-    return analytics_sc.MediaAnalytics(
+    return analytics_schemas.MediaAnalytics(
         total_channels=len(dbchannels), channels=channels
     )

@@ -29,8 +29,3 @@
   <svelte:component this={page} qs={qs}/>
   <PageFooter/>
 </div>
-
-
-<style>
-
-</style>

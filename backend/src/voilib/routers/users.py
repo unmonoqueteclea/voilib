@@ -1,9 +1,5 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
-
-"""User-related endpoints
-
-"""
 
 import logging
 import re

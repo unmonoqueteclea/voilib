@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Utilities to parse podcasts RSS feeds
@@ -88,7 +88,7 @@ def read_episodes(channel: models.Channel) -> list[models.Episode]:
     """Return a list with all the episodes (not stored yet in db) from
     a given channel.
     """
-    logger.info(f"reading episodes from channel: {channel.title}")
+    logger.info(f"reading episodes from channel: {channel.id}: {channel.title}")
     feed = _read_channel_feed(channel.feed)
     episodes: list[models.Episode] = []
     for ep in feed["rss"]["channel"]["item"]:
@@ -110,5 +110,5 @@ def read_episodes(channel: models.Channel) -> list[models.Episode]:
                 episodes.append(episode)
             else:
                 logger.warning(f"episode without title: {ep} won't be stored")
-    logger.info(f"{len(episodes)} episodes parsed from {channel.title}")
+    logger.info(f"{len(episodes)} episodes parsed from channel {channel.title}")
     return episodes

@@ -248,5 +248,25 @@
     "name": "BBC Earth Podcast",
     "url": "https://feeds.acast.com/public/shows/63fb67c5-f719-43f7-b264-390cd7edb120",
     "language": "en"
+  },
+  {
+    "name": "Huberman Lab",
+    "url": "https://feeds.megaphone.fm/hubermanlab",
+    "language": "en"
+  },
+  {
+    "name": "Intercambio Iónico",
+    "url": "https://feeds.simplecast.com/KSzIeZYb",
+    "language": "es"
+  },
+  {
+    "name": "El Estoico",
+    "url": "https://feeds.simplecast.com/WbOwOy1H",
+    "language": "es"
+  },
+  {
+    "name": "Lo que tú digas",
+    "url": "https://www.ivoox.com/lo-tu-digas_fg_f1424550_filtro_1.xml",
+    "language": "es"
   }
 ]

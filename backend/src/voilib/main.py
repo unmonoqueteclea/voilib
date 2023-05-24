@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Main module that will be always executed on startup.
@@ -12,7 +12,7 @@ from fastapi_pagination import add_pagination
 import voilib
 from voilib import db, routers
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
 app = fastapi.FastAPI(title="voilib", version=voilib.__version__)
 

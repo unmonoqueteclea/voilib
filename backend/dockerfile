@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 FROM python:3.9.10-slim-bullseye
@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
 WORKDIR /backend
-# we need curl for the healthchecks, build-essential to build hnswlib
+# we need curl for the health checks, build-essential to build hnswlib
 # we need ffmpeg to load audios
 RUN apt-get update &&\
     apt-get install --no-install-recommends -y curl ffmpeg git build-essential &&\
@@ -21,6 +21,6 @@ RUN python3.9 -m pip install -U pip &&\
 
 COPY . .
 
-# allow installing dev dependencies to run tests
+# allow installing development dependencies to run tests
 ARG INSTALL_DEV=false
 RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then pip install -e .[dev] ; else pip install . ; fi"

@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Main high-level data collection related functions.
@@ -36,16 +36,19 @@ async def get_or_create_channel(
     ch = await models.Channel.objects.get_or_none(models.Channel.feed == feed_url)
     if ch is None:
         created = True
+        logger.info(f"creating the channel from url {feed_url}...")
         ch = await feed.read_channel(feed_url, language).save()
     return created, ch
 
 
 async def add_default_channels() -> int:
-    """Add all the default channels hardcoded in Voilib's codebase.
+    """Add all the default channels hardcoded in Voilib's code (see
+    urls.json)
 
     Return the number of channels added
+
     """
-    logger.info("adding all the default hardcoded channels ")
+    logger.info("adding all the Voilib default channels ")
     total = 0
     for podcast in default_channels():
         url = podcast["url"]
@@ -66,7 +69,7 @@ async def _maybe_add_episode(
         logger.debug(f"ignoring episode {episode.id} as it already exists")
         return None
     else:
-        logger.info(f"creating episode {episode.title} in channel {channel.pk}")
+        logger.info(f"creating episode {episode.title} in channel {channel.id}")
         # this will perform episode's save
         await channel.episodes.add(episode)
         return episode

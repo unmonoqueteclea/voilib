@@ -1,9 +1,6 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
-"""media-related endpoints
-
-"""
 import logging
 import uuid
 from typing import Optional
@@ -12,7 +9,7 @@ import fastapi
 from fastapi_pagination import Page
 from fastapi_pagination.ext.ormar import paginate
 
-from voilib import auth, tasks, vector
+from voilib import auth, tasks
 from voilib.collection import crawler
 from voilib.models import media, users, analytics
 from voilib.schemas import media as media_schemas
@@ -79,7 +76,6 @@ async def delete_channel(
     channel_id: uuid.UUID,
     admin: users.User = fastapi.Depends(auth.get_current_admin_user),
 ) -> dict:
-    """Delete a single channel by its id"""
     channel = await media.Channel.objects.get(id=channel_id)
     return {"deleted_rows": await channel.delete()}
 
@@ -120,22 +116,23 @@ async def delete_episode(
     episode_id: uuid.UUID,
     admin: users.User = fastapi.Depends(auth.get_current_admin_user),
 ) -> dict:
-    """Delete a single episode by its id"""
     episode = await media.Episode.objects.get(id=episode_id)
     return {"deleted_rows": await episode.delete()}
 
 
-@router.get("/query", response_model=list[media_schemas.QueryResponse])
+@router.get(
+    "/query",
+    summary="Perform a new query in the whole database",
+    response_model=list[media_schemas.QueryResponse],
+)
 async def query(
     query_text: str,
     background_tasks: fastapi.BackgroundTasks,
-    k: int = 4,
+    k: int = 6,
 ):
-    """Perform a new query in the whole database of episode embeddings."""
     background_tasks.add_task(store_user_query, query_text)
-    search_results: list[vector.QueryResponse] = tasks.search(query_text)
     output: list[media_schemas.QueryResponse] = []
-    for r in search_results:
+    for r in tasks.search(query_text, k):
         episode = await media.Episode.objects.get(pk=r.episode)
         output.append(
             media_schemas.QueryResponse(

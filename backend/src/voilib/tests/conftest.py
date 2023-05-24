@@ -1,9 +1,7 @@
-# Copyright (c) 2022 Pablo González Carrizo
+# Copyright (c) 2022 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
-# import logging
 import pathlib
-
 import pytest
 import sqlalchemy
 from starlette.testclient import TestClient

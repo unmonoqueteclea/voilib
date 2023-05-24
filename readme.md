@@ -1,5 +1,96 @@
 # voilib: podcast search engine
 
+# final check
+- time in logs
+- add episodes from twitter user
+## files
+├── backend
+│   ├── readme.md
+│   └── src
+│       ├── voilib
+│       │   ├── cli
+│       │   │   ├── checks.py
+│       │   │   ├── episodes.py
+│       │   ├── __init__.py
+│       │   ├── routers
+│       │   │   ├── media.py
+│       │   ├── tasks.py
+│       │   ├── tests
+│       │   │   ├── conftest.py
+│       │   │   ├── __init__.py
+│       │   │   ├── test_analytics.py
+│       │   │   ├── test_app.py
+│       │   │   ├── test_collection.py
+│       │   │   ├── test_media.py
+│       │   │   ├── test_storage.py
+│       │   │   ├── test_transcription.py
+│       │   │   ├── test_users.py
+│       │   │   └── test_vector.py
+│       │   ├── transcription.py
+│       │   ├── vector.py
+│       │   └── worker.py
+├── frontend
+│   ├── index.html
+│   ├── jsconfig.json
+│   ├── makefile
+│   ├── nginx.conf
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── README.md
+│   ├── src
+│   │   ├── api.js
+│   │   ├── App.svelte
+│   │   ├── assets
+│   │   │   └── svelte.svg
+│   │   ├── lib
+│   │   │   ├── app.js
+│   │   │   ├── CardQueryResult.svelte
+│   │   │   ├── DemoQueries.svelte
+│   │   │   ├── Hero.svelte
+│   │   │   ├── PageFooter.svelte
+│   │   │   ├── PageHeader.svelte
+│   │   │   ├── pages
+│   │   │   │   ├── About.svelte
+│   │   │   │   ├── Content.svelte
+│   │   │   │   ├── Home.svelte
+│   │   │   │   └── Query.svelte
+│   │   │   ├── Player.svelte
+│   │   │   ├── StretchSpinner.svelte
+│   │   │   └── WaveSpinner.svelte
+│   │   ├── routes.js
+├── infra
+│   ├── development
+│   │   ├── compose.yml
+│   │   └── traefik.dev.toml
+│   ├── makefile
+│   ├── production
+│   │   ├── cert
+│   │   ├── compose.yml
+│   │   └── traefik.prod.toml
+│   └── readme.md
+└── readme.md
+
+
+# cron
+crontab -e
+
+```
+# update list of episodes every 6 hours
+0 */6 * * * cd /home/accushoot/voilib/infra/development && docker compose --env-file=.env.dev exec worker voilib-episodes --update
+
+# transcribe last day episodes every 12 hours
+20 */12 * * * cd /home/accushoot/voilib/infra/development && docker compose --env-file=.env.dev exec worker voilib-episodes --transcribe-days 1
+
+# calculate pending embeddings every 6 hours
+40 */6 * * * cd /home/accushoot/voilib/infra/development && docker compose --env-file=.env.dev exec worker voilib-episodes --store
+
+
+```
+
+
+
+
+
 # quickstart
 To run all the services locally, just do (from [./voilib-infra](./voilib-infra)):
 

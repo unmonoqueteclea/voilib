@@ -56,12 +56,9 @@
   </div>
   <div>
     <p class="mt-6  max-w-2xl text-center">
-      ℹ️ Do you want to index your own content? Are you a content creator
-      and want to offer full transcriptions and automatically
-      generated summaries to your subscribers?
-    </p>
-    <p class="mt-2 max-w-2xl text-center">
-      Check <a class="ml-1 underline" href="/pro">Voilib PRO</a>.
+      ℹ️ Follow me on <a href="https://twitter.com/unmonoqueteclea" class="underline" rel="noopener noreferrer" target="_blank">
+      Twitter
+      </a> to know the new features before everyone else!
     </p>
   </div>
 

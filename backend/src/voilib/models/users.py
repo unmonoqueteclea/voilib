@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Authentication related models
@@ -16,6 +16,7 @@ class User(CoreModel):
     Fields email and username are unique.  Admin field is not
     postable, it is automatically set if a user signs up with the same
     name as the admin_username defined in app settings.
+
     """
 
     class Meta(ormar.ModelMeta):

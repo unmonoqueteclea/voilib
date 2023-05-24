@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Functions to store and retrieve information from/to the vector
@@ -67,6 +67,7 @@ def create_collection(
     embeddings_model: sentence_transformers.SentenceTransformer,
 ) -> None:
     """Create a collection in the vector database with the given name."""
+    logger.info(f"creating qdrant collection {name}")
     vsize = embeddings_model.get_sentence_embedding_dimension()
     client.recreate_collection(
         collection_name=name,
@@ -85,7 +86,7 @@ def ensure_collection(
 ):
     logger.info(f"trying to find collection {collection_name}")
     collections = client.get_collections().collections
-    logger.info(f"available collections: {collections}")
+    logger.debug(f"available collections: {collections}")
     found = [c for c in collections if c.name == collection_name]
     if not found:
         logger.info("collection not found, creating it")

@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Generate episode transcriptions
@@ -44,7 +44,7 @@ def transcribe(audio: pathlib.Path) -> Transcription:
     pipeline = _get_pipeline()
     output = pipeline(str(audio), task="transcribe", return_timestamps=True)
     end_time = time.time()
-    logger.info(f"end transcription of file {audio} in {end_time-start_time}")
+    logger.info(f"end transcription of file {audio} in {end_time-start_time} seconds")
     return [(*c["timestamp"], c["text"]) for c in output["chunks"]]  # type: ignore
 
 
@@ -64,8 +64,8 @@ def read_transcription(path: pathlib.Path) -> Transcription:
         for row in reader:
             start = float(row[0])
             # sometimes the end is not defined
-            end = float(row[1]) if len(row[1])>0 else start
-            rows.append((start,end,row[2]))
+            end = float(row[1]) if len(row[1]) > 0 else start
+            rows.append((start, end, row[2]))
     return rows
 
 
@@ -74,7 +74,7 @@ async def transcribe_episode(episode: media.Episode) -> pathlib.Path:
     the path of the generated transcription file.
 
     """
-    logger.info(f"transcription of episode {episode.title}")
+    logger.info(f"transcription of episode {episode.title}: {episode.pk}")
     trfile = await storage.transcription_file(episode)
     if not trfile.exists():
         audio = await storage.download_episode(episode)

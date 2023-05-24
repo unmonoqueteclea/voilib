@@ -72,16 +72,12 @@
   </div>
   <div class="flex flex-row mt-6 mx-5 md:mx-16 text-gray-500">
     ℹ️ Voilib will find related content in episodes
-    transcriptions. Trying to find specific poscast titles or episodes
+    transcriptions. Trying to find specific podcast titles or episodes
     names won't be useful.
   </div>
   <div class="flex flex-row mt-2 mx-5 md:mx-16 text-gray-500">
-    📢  We are happy to receive your feedback
+    📢  We are happy to receive your feedback and podcasts requests
     <a class="underline ml-1" href="mailto: unmonoqueteclea@gmail.com"> here</a>!
-  </div>
-
-  <div class="flex flex-row mt-2 mx-5 md:mx-16 text-gray-500">
-    ✅ <strong class="ml-2">New episodes added on April, 7th)</strong>. More than 1K hours of episodes indexed!
   </div>
 
   <div class="flex flex-row place-content-center mt-1 mx-5 md:mx-16">

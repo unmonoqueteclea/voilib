@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 [build-system]
@@ -15,4 +15,5 @@ log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 # filter a deprecation warning raised by a Tensorflow dependency
 filterwarnings = ["ignore:the imp module is deprecated:DeprecationWarning"]
 
+# using pytest-env plugin
 env = ["ENVIRONMENT=test"]

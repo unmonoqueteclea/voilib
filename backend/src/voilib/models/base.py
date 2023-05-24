@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Classes used as a parent for other app models.
@@ -16,9 +16,10 @@ class CoreModel(ormar.Model):
     """Parent model of almost all the rest of app models. No table
     associated (abstract).
 
-    We distinguish between the autoincremental primary key (pk) and
-    the id exposed through the API (id), so both fields will be
-    created.
+    We distinguish between the auto-incremental primary key (pk) and
+    the public uuid exposed through the API (id), so both fields will
+    be created.
+
     """
 
     pk = ormar.Integer(primary_key=True)

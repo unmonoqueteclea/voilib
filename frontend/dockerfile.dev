@@ -1,8 +1,11 @@
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
+# All rights reserved.
+
 FROM node:19-slim
 
 WORKDIR /frontend
 
-# we need curl for the healthcheck
+# we need curl for the health check
 RUN apt-get update &&\
     apt-get install --no-install-recommends -y curl &&\
     rm -rf /var/lib/apt/lists/*

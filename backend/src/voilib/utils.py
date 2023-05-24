@@ -1,7 +1,7 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
-"""Utilities
+"""Mixed utilities
 
 Everything can be considered an utility, so let's try to keep this as
 small as possible.

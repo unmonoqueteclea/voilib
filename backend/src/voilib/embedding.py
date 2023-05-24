@@ -1,10 +1,11 @@
-# Copyright (c) 2023 Pablo González Carrizo
+# Copyright (c) 2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Functions to create vectors (embeddings) representing fragments of
 transcriptions (fragment length is configurable).
 
 See https://www.sbert.net/examples/applications/semantic-search/README.html
+
 """
 import torch
 import numpy as np
@@ -49,7 +50,7 @@ def load_embeddings_model(name: str) -> sentence_transformers.SentenceTransforme
     it is cached, and later function executions will just use the
     cached instance.
     """
-    logger.info(f"loading transformer model {name}")
+    logger.info(f"loading and caching transformer model {name}")
     return sentence_transformers.SentenceTransformer(name)
 
 
@@ -57,7 +58,7 @@ def calculate_fragments(
     transcription: tr.Transcription, max_fragment_words: int
 ) -> list[Fragment]:
     """Group all the words from the given transcription in fragments
-    (the minimun unit used to create embeddings) with the configured
+    (the minimum unit used to create embeddings) with the configured
     max words.
 
     """
@@ -104,6 +105,7 @@ def _transcription_embeddings(
     max_fragment_words: int,
 ) -> tuple[Embeddings, list[Fragment]]:
     fragments = calculate_fragments(transcription, max_fragment_words)
+    logger.info(f"encoding {len(fragments)} fragments...")
     embeddings = model.encode([f.text for f in fragments])
     return embeddings, fragments
 
@@ -112,6 +114,7 @@ def text2embedding(
     text: str, model: sentence_transformers.SentenceTransformer
 ) -> Embeddings:
     """Return embedding from the given text."""
+    logger.info(f"encoding text: {text}")
     return model.encode([text])
 
 
@@ -124,10 +127,10 @@ async def episode_embeddings(
     episode.
 
     """
-
+    logger.info(f"obtaining embeddings for episode {episode.pk}: {episode.title}")
     trfile = await storage.transcription_file(episode)
     if not trfile.exists():
-        assert ValueError(f"cannot find transcription for {episode.id}")
+        assert ValueError(f"cannot find transcription for {episode.pk}")
     return _transcription_embeddings(
         tr.read_transcription(trfile), model, max_fragment_words
     )

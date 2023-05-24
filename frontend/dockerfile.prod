@@ -1,14 +1,21 @@
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
+# All rights reserved.
+
 FROM node:19-slim as build-stage
 ARG API_HOST
 
 WORKDIR /frontend
-# we need curl for the healthcheck
+# we need curl for the health check
 RUN apt-get update &&\
     apt-get install --no-install-recommends -y curl &&\
     rm -rf /var/lib/apt/lists/*
+
 COPY ./package.json ./package.json
 COPY ./package-lock.json ./package-lock.json
 COPY ./ .
+
+# ensure all the env vars needed by the front-end are here before
+# running build
 ENV VITE_API_HOST=${API_HOST}
 RUN npm install && npm run build
 

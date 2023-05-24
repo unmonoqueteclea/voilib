@@ -1,9 +1,9 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo
+# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Media-related models. The main two media entities are Episode (a
-specific media item, usually a podcast episode) and Channel (a
-collection of related episodes).
+specific media item, a podcast episode) and Channel (a collection of
+related episodes).
 
 """
 import enum
@@ -64,10 +64,12 @@ class Episode(base.CoreModel):
     title: str = ormar.String(max_length=250)  # type: ignore
     description: str = ormar.Text()  # type: ignore
     date = ormar.DateTime(timezone=True, nullable=True)
-    guid = ormar.Text()  # origin item guid
+    guid = ormar.Text()  # episode guid at origin
     url: str = ormar.Text()  # type: ignore
     episode = ormar.Integer(default=-1)
     season = ormar.Integer(default=-1)
     duration = ormar.Integer(default=-1)
+    # whether transcriptions are available for the episode
     transcribed = ormar.Boolean(default=False)
+    # whether embeddings are available for the episode
     embeddings = ormar.Boolean(default=False)

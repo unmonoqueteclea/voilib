@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Pablo González Carrizo
+# Copyright (c) 2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Main voilib data tasks
@@ -66,7 +66,7 @@ async def store_episode_embeddings(
     """Obtain embeddings for a given episode and store them in the
     vector database.
     """
-    logger.info(f"storing embeddings for episode {episode.id}")
+    logger.info(f"storing embeddings for episode {episode.title}: {episode.pk}")
     embeddings, fragments = await embedding.episode_embeddings(
         episode, model, embedding.DEFAULT_FRAGMENT_WORDS
     )
@@ -83,6 +83,7 @@ async def store_episodes_embeddings() -> None:
     episodes = await models.Episode.objects.filter(
         transcribed=True, embeddings=False
     ).all()
+    logger.info(f"there are {len(episodes)} pending episodes...")
     random.shuffle(episodes)
     for episode in episodes:
         await store_episode_embeddings(
@@ -91,9 +92,15 @@ async def store_episodes_embeddings() -> None:
     return
 
 
-def search(text: str) -> list[vector.QueryResponse]:
+def search(text: str, num_results: int) -> list[vector.QueryResponse]:
+    """Main query function. Use semantic search to find content
+    related to the given text in all the vector database.
+
+    """
     model = embedding.load_embeddings_model(embedding.DEFAULT_EMBEDDINGS_MODEL)
-    client = vector.get_configured_client()
-    query = embedding.text2embedding(text, model)
-    results = vector.search(client, query, vector.DEFAULT_COLLECTION, 8)
-    return results
+    return vector.search(
+        vector.get_configured_client(),
+        embedding.text2embedding(text, model),
+        vector.DEFAULT_COLLECTION,
+        num_results,
+    )
