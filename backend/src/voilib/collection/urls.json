@@ -268,5 +268,10 @@
     "name": "Lo que tú digas",
     "url": "https://www.ivoox.com/lo-tu-digas_fg_f1424550_filtro_1.xml",
     "language": "es"
+  },
+  {
+    "name": "MRKT Call",
+    "url": "https://feeds.megaphone.fm/RRM3971763968",
+    "language": "en"
   }
 ]

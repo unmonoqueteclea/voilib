@@ -4,6 +4,7 @@
 """Main voilib data tasks
 """
 
+from typing import Optional
 import logging
 from voilib import (
     models,
@@ -37,19 +38,25 @@ async def update_channels() -> int:
     return total
 
 
-async def transcribe_episodes(num_days: int) -> int:
+async def transcribe_episodes(
+    num_days: int, channel: Optional[models.Channel] = None, random_order=True
+) -> int:
     """Transcribe episodes, in a random order, from the last num_days
     days. Return the total number of episodes transcribed.
 
     """
-    logger.info(f"transcribing episodes from last {num_days} days")
+    channel_info = f"channel {channel.pk}: {channel.title}" if channel else ""
+    logger.info(f"transcribing episodes from last {num_days} days. {channel_info}")
     qs = models.Episode.objects.filter(
         transcribed=False, date__gt=datetime.now() - timedelta(days=num_days)
     )
+    if channel:
+        qs = qs.filter(channel=channel)
     episodes = await qs.all()
     total = len(episodes)
     logger.info(f"{total} episodes are going to be transcribed in an async task")
-    random.shuffle(episodes)
+    if random_order:
+        random.shuffle(episodes)
     for episode in episodes:
         settings.queue.enqueue(
             transcription.transcribe_episode, episode, job_timeout="600m"
