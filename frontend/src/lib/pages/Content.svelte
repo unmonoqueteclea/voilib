@@ -8,7 +8,7 @@
   async function doQuery() {
     queryLoading = true
     queryResults = [];
-    let url = new URL(API_URL + "/analytics/media-count/")
+    let url = new URL(API_URL + "/analytics/media-count")
     await fetch(url).then(r => r.json()).then(data => {queryResults = data.channels;});
     queryLoading = false
   }
