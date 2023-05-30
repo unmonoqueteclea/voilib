@@ -45,7 +45,9 @@ class Settings(pydantic.BaseSettings):
 
     @property
     def data_dir(self) -> pathlib.Path:
-        if self.environment == Environment.test.value:
+        if self.environment == Environment.production.value:
+            return pathlib.Path("/data")
+        elif self.environment == Environment.test.value:
             return self.repo_dir / "data-test"
         return self.repo_dir / "data"
 
