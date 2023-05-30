@@ -95,6 +95,7 @@ services:
       dockerfile: dockerfile
       args:
         INSTALL_DEV: false
+    command: python src/voilib/worker.py
     volumes:
       - ../../data-production/:/data/
     restart: unless-stopped
