@@ -1,10 +1,10 @@
 help:
 	@echo "Voilib Infrastructure                                      "
 	@echo "\nAvailable targets for development: "
-	@echo " - make dev-build: build images in development mode        "
+	@echo " - make dev-build: build Docker images in development mode        "
 	@echo " - make dev-run: start all services in development mode    "
 	@echo "\nAvailable targets for production: "
-	@echo " - make prod-build: build images in production mode        "
+	@echo " - make prod-build: build Docker images in production mode        "
 	@echo " - make prod-run: start all services in production mode    "
 
 

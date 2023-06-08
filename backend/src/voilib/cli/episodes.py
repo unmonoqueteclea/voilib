@@ -20,13 +20,6 @@ async def _main() -> None:
     )
 
     parser.add_argument(
-        "--add-default-channels",
-        action="store_true",
-        default=False,
-        help="Add all default channels hardcoded in the codebase",
-    )
-
-    parser.add_argument(
         "--update",
         action="store_true",
         default=False,
@@ -57,11 +50,9 @@ async def _main() -> None:
     )
 
     args = parser.parse_args()
-    if args.add_default_channels:
-        logger.info("adding default channels form an background task")
-        await collection.add_default_channels()
     if args.update:
         logger.info("updating channels form an background task")
+        await collection.add_default_channels()
         await tasks.update_channels()
     if args.transcribe_days > 0:
         await tasks.transcribe_episodes(args.transcribe_days)

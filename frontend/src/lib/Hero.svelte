@@ -6,10 +6,10 @@
 	<span class="text-base mr-1">🔍</span> Semantic search in
 	thousands of minutes of
 	high-quality <span class="font-medium">transcriptions</span>
-	of <span class="font-medium"> podcasts and videos</span>.
-	Just type your query in English 🇺🇸 or Spanish 🇪🇸 and we will
-	find related content in thousands
-	of <a class="underline" href="/content">episodes</a>. <a class="ml-1 underline"
+	of <span class="font-medium"> podcasts</span>.  Just type your
+	query in English 🇺🇸 or Spanish 🇪🇸 and we will find related
+	content in thousands of <a class="underline"
+	href="/content">episodes</a>. <a class="ml-1 underline"
 	href="/about">Find more</a>.
       </p>
     </div>

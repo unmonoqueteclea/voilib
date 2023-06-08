@@ -1,9 +1,0 @@
-*.egg-info/
-.python-version
-__pycache__
-.mypy_cache
-.coverage
-htmlcov
-.ruff_cache
-pyrightconfig.json
-.projectile
