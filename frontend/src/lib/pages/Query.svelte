@@ -80,6 +80,15 @@
     <a class="underline ml-1" href="mailto: unmonoqueteclea@gmail.com"> here</a>!
   </div>
 
+  <div class="flex flex-row mt-2 mx-5 md:mx-16 text-gray-500">
+  🖤 Voilib doesn't offer any paid service. Help me ensure the
+ continued availability and accessibility of it
+  by
+  <a target="_blank" class="underline ml-1 font-bold"
+  href="https://ko-fi.com/unmonoqueteclea">supporting me through
+  donations</a>.
+  </div>
+
   <div class="flex flex-row place-content-center mt-1 mx-5 md:mx-16">
     <div class="divider w-full"></div>
   </div>

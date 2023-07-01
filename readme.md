@@ -11,9 +11,9 @@ will find related content in thousands of episodes.
 
 > Voilib doesn't offer any paid service. Help me ensure the continued
 > availability and accessibility of it by supporting me through
-> donations. By contributing, you directly contribute to covering the
-> server expenses and enable me to maintain and improve Voilib for
-> users worldwide. [Customized
+> donations. You will directly contribute to covering the server
+> expenses and enable me to maintain and improve Voilib for users
+> worldwide. [Customized
 > assistance](https://ko-fi.com/unmonoqueteclea/commissions) is also
 > offered.
 >
