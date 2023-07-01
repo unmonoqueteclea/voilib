@@ -5,6 +5,7 @@ high-quality transcriptions of podcasts. Just type your query and it
 will find related content in thousands of episodes.
 
 ![](https://github.com/unmonoqueteclea/voilib/actions/workflows/backend.yml/badge.svg)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 🎧 **Try it now** for free at [voilib.com](https://voilib.com/)!
 
@@ -47,3 +48,12 @@ interesting fragments for every user prompt.
   calculate the embedding of it and find the closest ones in the
   vector database, returning the most relevant episodes fragments to
   the user.
+
+## license
+Voilib is licensed under the GNU GPLv3 license. See [COPYING](./COPYING).
+
+Permissions of this strong copyleft license are conditioned on making
+available complete source code of licensed works and modifications,
+which include larger works using a licensed work, under the same
+license. Copyright and license notices must be preserved. Contributors
+provide an express grant of patent rights.
