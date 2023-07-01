@@ -9,16 +9,28 @@ will find related content in thousands of episodes.
 
 🎧 **Try it now** for free at [voilib.com](https://voilib.com/)!
 
+> Voilib doesn't offer any paid service. Help me ensure the continued
+> availability and accessibility of it by supporting me through
+> donations. By contributing, you directly contribute to covering the
+> server expenses and enable me to maintain and improve Voilib for
+> users worldwide. [Customized
+> assistance](https://ko-fi.com/unmonoqueteclea/commissions) is also
+> offered.
+>
+> <a href='https://ko-fi.com/Z8Z7M4I8K'
+> target='_blank'><img height='36' style='border:0px;height:36px;'
+> src='https://storage.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy
+> Me a Coffee at ko-fi.com' /></a>
+
+
 ▶️ You can run **your own instance** of Voilib in your server, it
 doesn't depend on any external paid service. You can start by reading
 [deployment docs](./infra/readme.md) and its [first run tasks
 section](./infra/readme.md#first-run-tasks).
 
----
 
 ![Voilib](./docs/voilib.gif)
 
----
 
 ## ❓ how it works
 Voilib performs 4 main tasks: **collecting**, **transcribing**,
