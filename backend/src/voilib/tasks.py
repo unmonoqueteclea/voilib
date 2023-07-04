@@ -30,10 +30,14 @@ async def update_channels() -> int:
     logger.info("updating all channels")
     total = 0
     for ch in await models.Channel.objects.all():
-        logger.info(f"updating channel {ch.id}: {ch.title}")
-        added = await collection.update_channel(ch)
-        logger.info(f"new episodes added to {ch.title}: {added}")
-        total += added
+        ch_info = f"channel {ch.id}-{ch.title}"
+        logger.info(f"updating {ch_info} ")
+        try:
+            added = await collection.update_channel(ch)
+            logger.info(f"new episodes added to {ch_info}: {added}")
+            total += added
+        except Exception:
+            logger.error(f"error while reading channel {ch_info}", exc_info=True)
     logger.info(f"finished channels update after creating {total}")
     return total
 
