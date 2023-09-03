@@ -9,28 +9,21 @@ import functools
 import logging
 import pathlib
 import time
-import jax.numpy as jnp
-from whisper_jax import FlaxWhisperPipline
+
+from faster_whisper import WhisperModel
 
 from voilib import storage
 from voilib.models import media
 
 logger = logging.getLogger(__name__)
-
-# https://github.com/sanchit-gandhi/whisper-jax#available-models-and-languages
 TRANSCRIBER_MODEL: str = "small"
 Transcription = list[tuple[float, float, str]]
 
 
 @functools.cache
-def _get_pipeline() -> FlaxWhisperPipline:
-    logger.info("loading transcription pipeline object")
-    return FlaxWhisperPipline(
-        f"openai/whisper-{TRANSCRIBER_MODEL}",
-        # running model computation in half-precision to make it faster
-        dtype=jnp.float16,
-        batch_size=4,
-    )
+def _get_model() -> WhisperModel:
+    logger.info("loading transcription model object")
+    return WhisperModel(TRANSCRIBER_MODEL, device="cpu", compute_type="int8")
 
 
 def transcribe(audio: pathlib.Path) -> Transcription:
@@ -41,11 +34,12 @@ def transcribe(audio: pathlib.Path) -> Transcription:
     """
     logger.info(f"start transcription of file {audio}")
     start_time = time.time()
-    pipeline = _get_pipeline()
-    output = pipeline(str(audio), task="transcribe", return_timestamps=True)
+    model = _get_model()
+    segments, info = model.transcribe(str(audio))
     end_time = time.time()
+    transcription = [(s.start, s.end, s.text) for s in segments]
     logger.info(f"end transcription of file {audio} in {end_time-start_time} seconds")
-    return [(*c["timestamp"], c["text"]) for c in output["chunks"]]  # type: ignore
+    return transcription
 
 
 def store_transcription(transcription: Transcription, path: pathlib.Path) -> None:

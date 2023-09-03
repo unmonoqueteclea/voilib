@@ -90,7 +90,7 @@ For transcription (see
 [transcription.py](./src/voilib/transcription.py) module) Voilib uses
 [Whisper: Open AI's Open Source Transcription
 Model](https://openai.com/research/whisper), running locally with the
-help of [whisper-jax](https://github.com/sanchit-gandhi/whisper-jax)
+help of [faster-whisper](https://github.com/guillaumekln/faster-whisper/)
 library.
 
 The output of the transcription of an episode is a `CSV` file (using
