@@ -4,8 +4,10 @@
 """ Media-related schemas.
 
 """
-from pydantic import BaseModel
 import typing
+
+from pydantic import BaseModel
+
 from voilib.models.base import CoreModel
 from voilib.models.media import Channel, Episode
 

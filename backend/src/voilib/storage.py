@@ -4,13 +4,14 @@
 """ File storage related functions
 
 """
+import functools
 import logging
 import pathlib
-import functools
+
 import requests  # type: ignore
 
-from voilib.models import media
 from voilib import settings
+from voilib.models import media
 from voilib.utils import slugify
 
 DEFAULT_EPISODES_SUFFIX: str = "mp3"

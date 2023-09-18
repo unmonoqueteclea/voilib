@@ -4,20 +4,15 @@
 """Main voilib data tasks
 """
 
-from typing import Optional
 import logging
-from voilib import (
-    models,
-    settings,
-    transcription,
-    collection,
-    embedding,
-    vector,
-)
-from datetime import datetime, timedelta
 import random
-import sentence_transformers
+from datetime import datetime, timedelta
+from typing import Optional
+
 import qdrant_client
+import sentence_transformers
+
+from voilib import collection, embedding, models, settings, transcription, vector, utils
 
 logger = logging.getLogger(__name__)
 
@@ -77,11 +72,14 @@ async def store_episode_embeddings(
     """Obtain embeddings for a given episode and store them in the
     vector database.
     """
-    logger.info(f"storing embeddings for episode {episode.title}: {episode.pk}")
+    title = episode.title
+    logger.info(f"storing embeddings for episode {title}: {episode.pk}")
+    utils.log_event("event_store_start", title)
     embeddings, fragments = await embedding.episode_embeddings(
         episode, model, embedding.DEFAULT_FRAGMENT_WORDS
     )
     await vector.add_episode(episode, client, embeddings, collection_name, fragments)
+    utils.log_event("event_store_end", title)
     return
 
 

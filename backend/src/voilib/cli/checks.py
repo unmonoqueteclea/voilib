@@ -10,6 +10,7 @@ will perform the following tasks:
 """
 import argparse
 import asyncio
+
 from voilib import transcription
 
 DONT_FIX_TRANSCRIBED = "bypass fix-transcribed task"

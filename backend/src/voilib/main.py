@@ -5,6 +5,7 @@
 
 """
 import logging
+
 import fastapi
 from fastapi.middleware import cors
 from fastapi_pagination import add_pagination

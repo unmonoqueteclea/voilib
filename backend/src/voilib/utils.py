@@ -8,7 +8,10 @@ small as possible.
 
 """
 import re
+import time
 import unicodedata
+
+from voilib import settings
 
 
 def slugify(value: str) -> str:
@@ -17,3 +20,8 @@ def slugify(value: str) -> str:
     )
     value = re.sub("[^\w\s-]", "", value).strip().lower()  # noqa
     return re.sub("[-\s]+", "-", value)  # noqa
+
+
+def log_event(key: str, info: str) -> None:
+    redis = settings.settings.redis_cache
+    redis.set(key, f"{time.time()}|{info}")

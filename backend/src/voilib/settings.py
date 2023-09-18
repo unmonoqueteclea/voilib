@@ -14,6 +14,7 @@ environment variables.
 """
 import enum
 import pathlib
+
 import pydantic
 import redis  # type: ignore
 from rq import Queue  # type: ignore
@@ -21,6 +22,7 @@ from rq import Queue  # type: ignore
 CODE_DIR = pathlib.Path(__file__).parent
 BACKEND_DIR = CODE_DIR.parent.parent
 REPO_DIR = BACKEND_DIR.parent
+REDIS_CACHE_DB_NUMBER = 1
 
 
 class Environment(enum.Enum):
@@ -58,6 +60,10 @@ class Settings(pydantic.BaseSettings):
     @property
     def qdrant_use_file(self) -> bool:
         return self.environment == Environment.test.value
+
+    @property
+    def redis_cache(self) -> redis.Redis:
+        return redis.Redis(host=self.redis_host, db=REDIS_CACHE_DB_NUMBER)
 
 
 def create_queue(settings: Settings) -> Queue:

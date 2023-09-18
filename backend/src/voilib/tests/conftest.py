@@ -1,15 +1,17 @@
 # Copyright (c) 2022 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
+import os
 import pathlib
+import shutil
+from datetime import datetime
+
 import pytest
 import sqlalchemy
 from starlette.testclient import TestClient
-from datetime import datetime
-from voilib import auth, db, main, models, collection, transcription, storage
+
+from voilib import auth, collection, db, main, models, storage, transcription
 from voilib.settings import settings
-import shutil
-import os
 
 EXAMPLE_CHANNEL_FEED = "https://feeds.simplecast.com/5dXzywz5"
 

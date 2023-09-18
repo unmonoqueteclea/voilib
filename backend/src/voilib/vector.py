@@ -6,17 +6,18 @@ database.
 """
 
 import functools
-from typing import Optional, Union
-import pathlib
-import qdrant_client
-from qdrant_client import models
 import logging
-import sentence_transformers
-from voilib import embedding, settings, storage
-from voilib.models import Episode
+import pathlib
 import uuid
 from functools import cache
-from typing import NamedTuple
+from typing import NamedTuple, Optional, Union
+
+import qdrant_client
+import sentence_transformers
+from qdrant_client import models
+
+from voilib import embedding, settings, storage
+from voilib.models import Episode
 
 DEFAULT_COLLECTION: str = "vectordb"
 

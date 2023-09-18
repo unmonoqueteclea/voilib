@@ -7,14 +7,16 @@ transcriptions (fragment length is configurable).
 See https://www.sbert.net/examples/applications/semantic-search/README.html
 
 """
-import torch
-import numpy as np
-import typing
-import logging
-import sentence_transformers
 import functools
-from voilib import transcription as tr
+import logging
+import typing
+
+import numpy as np
+import sentence_transformers
+import torch
+
 from voilib import models, storage
+from voilib import transcription as tr
 
 logger = logging.getLogger(__name__)
 Embeddings = typing.Union[list[torch.Tensor], np.ndarray, torch.Tensor]

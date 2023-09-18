@@ -6,12 +6,13 @@
 It offers functions to retrieve poscast channels and episodes.
 """
 
-import logging
 import importlib.resources
 import json
-from voilib.collection import feed
-from voilib import models
+import logging
 from typing import Optional
+
+from voilib import models
+from voilib.collection import feed
 
 logger = logging.getLogger(__name__)
 

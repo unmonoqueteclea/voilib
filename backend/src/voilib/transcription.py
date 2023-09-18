@@ -12,7 +12,7 @@ import time
 
 from faster_whisper import WhisperModel
 
-from voilib import storage
+from voilib import storage, utils
 from voilib.models import media
 
 logger = logging.getLogger(__name__)
@@ -68,7 +68,9 @@ async def transcribe_episode(episode: media.Episode) -> pathlib.Path:
     the path of the generated transcription file.
 
     """
-    logger.info(f"transcription of episode {episode.title}: {episode.pk}")
+    title = episode.title
+    logger.info(f"transcription of episode {title}: {episode.pk}")
+    utils.log_event("event_transcription_start", title)
     trfile = await storage.transcription_file(episode)
     if not trfile.exists():
         audio = await storage.download_episode(episode)
@@ -77,7 +79,8 @@ async def transcribe_episode(episode: media.Episode) -> pathlib.Path:
     if not episode.transcribed:
         episode.transcribed = True
         await episode.update()
-    logger.info(f"transcription of episode {episode.title} finished")
+    utils.log_event("event_transcription_end", title)
+    logger.info(f"transcription of episode {title} finished")
     return trfile
 
 

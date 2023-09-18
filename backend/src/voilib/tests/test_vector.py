@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
-from voilib import embedding, vector, storage, transcription
+from voilib import embedding, storage, transcription, vector
 
 
 async def test_calculate_fragments(jobs_transcription, fake_episode):

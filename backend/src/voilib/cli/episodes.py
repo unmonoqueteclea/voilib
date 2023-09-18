@@ -9,7 +9,8 @@ Some of them need a running Redis and RQ worker.
 import argparse
 import asyncio
 import logging
-from voilib import collection, tasks, models
+
+from voilib import collection, models, tasks
 
 logger = logging.getLogger(__name__)
 

@@ -11,7 +11,7 @@ from fastapi_pagination.ext.ormar import paginate
 
 from voilib import auth, tasks
 from voilib.collection import crawler
-from voilib.models import media, users, analytics
+from voilib.models import analytics, media, users
 from voilib.schemas import media as media_schemas
 
 logger = logging.getLogger(__name__)

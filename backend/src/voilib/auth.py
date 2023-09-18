@@ -12,6 +12,7 @@ token expiration time.
 
 from datetime import datetime, timedelta
 from typing import Optional
+
 import fastapi
 from fastapi import security
 from jose import JWTError, jwt
