@@ -32,18 +32,18 @@ class Environment(enum.Enum):
 
 
 class Settings(pydantic.BaseSettings):
-    environment: str = Environment.development.value
+    environment: str = Environment.production.value
     code_dir: pydantic.DirectoryPath = CODE_DIR
     repo_dir: pydantic.DirectoryPath = REPO_DIR
     media_folder_name: str = "media"
     redis_host: str = "redis"
     qdrant_host: str = "qdrant"
     qdrant_port: int = 6333
-    # this user, after its creation, will be automatically assigned
-    # admin privileges
     admin_username: str = "voilib-admin"
+    admin_password: str = "*audio*search*engine"
+    admin_email: str = "placeholder@voilib.com"
     # you can generate it with: openssl rand -hex 32
-    secret_key: str = ""
+    secret_key: str = "917b2755cafdb6456cc718a5d6b25d0ac25a4f12a288dbc8941f39861a86ab06"
 
     @property
     def data_dir(self) -> pathlib.Path:

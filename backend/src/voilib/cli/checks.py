@@ -4,8 +4,8 @@
 """Perform data integrity checks, trying to fix data if possible.  It
 will perform the following tasks:
 
-- fix-transcribed: fixing episodes' "transcribed" field if they have
-  an existing transcription file
+- fixing episodes' "transcribed" field if they have an existing
+  transcription file
 
 """
 import argparse
