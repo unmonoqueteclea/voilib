@@ -71,13 +71,13 @@ def jobs_transcription() -> transcription.Transcription:
     return [
         (0.0, 3.2, " It was their farewell message as they signed off."),
         (3.2, 6.28, " Stay hungry, stay foolish."),
-        (6.28, 9.78, " And I have always wished that for myself."),
+        (6.28, 9.8, " And I have always wished that for myself."),
         (
-            9.78,
-            15.08,
+            9.8,
+            15.120000000000001,
             " And now, as you graduate to begin anew, I wish that for you.",
         ),
-        (15.08, 18.12, " Stay hungry, stay foolish."),
+        (15.120000000000001, 18.16, " Stay hungry, stay foolish."),
     ]
 
 
