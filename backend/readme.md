@@ -49,7 +49,7 @@ tasks such as **updating episodes** from the list of feeds or
 **transcribing episodes** from the last X days. All the available
 tasks are defined in `[options.entry_points]` in
 [setup.cfg](./setup.cfg) file. You can use `--help` to see all their
-options, e.g. `voilib-checks --help` or `voilib-episodes --help`.
+options, e.g. `voilib-management --help` or `voilib-episodes --help`.
 
 In the [first-run-tasks section of deployment
 docs](../infra/readme.md#first-run-tasks) we are using those scripts
