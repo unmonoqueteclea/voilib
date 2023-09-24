@@ -23,6 +23,7 @@ async def update_channels() -> int:
 
     """
     logger.info("updating all channels")
+    utils.log_event("event_update_start", "")
     total = 0
     for ch in await models.Channel.objects.all():
         ch_info = f"channel {ch.id}-{ch.title}"
@@ -33,6 +34,7 @@ async def update_channels() -> int:
             total += added
         except Exception:
             logger.error(f"error while reading channel {ch_info}", exc_info=True)
+    utils.log_event("event_update_end", "")
     logger.info(f"finished channels update after creating {total}")
     return total
 

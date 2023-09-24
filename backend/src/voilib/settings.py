@@ -63,7 +63,9 @@ class Settings(pydantic.BaseSettings):
 
     @property
     def redis_cache(self) -> redis.Redis:
-        return redis.Redis(host=self.redis_host, db=REDIS_CACHE_DB_NUMBER)
+        return redis.Redis(
+            host=self.redis_host, db=REDIS_CACHE_DB_NUMBER, decode_responses=True
+        )
 
 
 def create_queue(settings: Settings) -> Queue:

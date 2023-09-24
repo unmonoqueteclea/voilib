@@ -6,7 +6,6 @@ import logging
 from fastapi import APIRouter, Depends
 from fastapi_pagination import Page
 from fastapi_pagination.ext.ormar import paginate
-
 from voilib import auth
 from voilib.models import analytics, media, users
 from voilib.schemas import analytics as analytics_schemas
@@ -40,6 +39,7 @@ async def _media():
         channels.append(
             analytics_schemas.ChannelAnalytics(
                 title=channel.title,
+                description=channel.description,  # type: ignore
                 image=channel.image,
                 url=channel.url,
                 total_episodes=await eps.count(),

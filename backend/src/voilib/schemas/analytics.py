@@ -5,7 +5,6 @@
 
 """
 from pydantic import BaseModel
-
 from voilib.models.analytics import Query
 
 QueryOut = Query.get_pydantic(exclude={"pk"})
@@ -15,6 +14,7 @@ class ChannelAnalytics(BaseModel):
     """Schema to show some analytics about a channel."""
 
     title: str
+    description: str
     total_episodes: int
     image: str
     url: str

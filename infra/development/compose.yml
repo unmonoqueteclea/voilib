@@ -94,6 +94,23 @@ services:
       - ../../backend/:/backend/
       - ../../data/:/data/
 
+  management:
+    <<: *defaults
+    image: voilib-worker:latest
+    env_file:
+      - .env.dev
+    build:
+      context: ../../backend
+      dockerfile: dockerfile
+      args:
+        INSTALL_DEV: true
+    ports:
+      - 8501:8501
+    command: streamlit run src/voilib/management/🏠-Home.py
+    volumes:
+      - ../../backend/:/backend/
+      - ../../data/:/data/
+
   frontend:
     <<: *defaults
     image: voilib-ui:latest

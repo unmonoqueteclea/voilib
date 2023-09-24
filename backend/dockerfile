@@ -24,3 +24,7 @@ COPY . .
 # allow installing development dependencies to run tests
 ARG INSTALL_DEV=false
 RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then pip install -e .[dev] ; else pip install . ; fi"
+
+RUN chmod +x "/backend/bin/docker-entrypoint.sh"
+ENTRYPOINT ["/backend/bin/docker-entrypoint.sh"]
+CMD ["uvicorn", "src.voilib.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "80"]
