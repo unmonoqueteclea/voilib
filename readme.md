@@ -22,14 +22,32 @@ will find related content in thousands of episodes.
 > src='https://storage.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy
 > Me a Coffee at ko-fi.com' /></a>
 
-
-▶️ You can run **your own instance** of Voilib in your server, it
-doesn't depend on any external paid service. You can start by reading
-[deployment docs](./infra/readme.md) and its [first run tasks
-section](./infra/readme.md#first-run-tasks).
-
-
 ![Voilib](./docs/voilib.gif)
+
+## ▶️ run your own instance now!
+
+You can run **your own instance** of Voilib in your server, it
+doesn't depend on any external paid service.
+
+```
+mkdir voilib && cd "voilib"
+curl https://raw.githubusercontent.com/unmonoqueteclea/voilib/main/compose.yml -o compose.yml
+docker compose up
+```
+
+> You will need an admin user and password. By default user
+> `voilib-admin` with password `*audio*search*engine*` will be
+> created.
+
+After all services are up, jump to
+[http://localhost:8501](http://localhost:8501) and follow the
+instructions to populate Voilib with content. You can also check
+[first run tasks section](./infra/readme.md#first-run-tasks).
+
+![Management](./docs/management.png)
+
+More information about deployments in
+[infra/readme](./infra/readme.md).
 
 
 ## ❓ how it works

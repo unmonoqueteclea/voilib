@@ -29,6 +29,8 @@ compose build`) and run all of them with `make dev-run` (it performs a
 
 - Application **frontend** at [http://localhost](http://localhost)
   (although it won't be ready yet for queries)
+- **Management Dashboard** at [http://localhost:8501](http://localhost:8501)
+  (although it won't be ready yet for queries)
 - **REST API** at
   [http://localhost/service/](http://localhost/service/) with
   `Swagger` docs at
@@ -59,11 +61,16 @@ Replace it also in the following lines from the `compose.yml` file
 - "traefik.http.routers.ui.rule=(Host(`voilib.com`) && PathPrefix(`/`))"
 ```
 
-...and
-
  ```yaml
  - "traefik.http.routers.api.rule=(Host(`voilib.com`) && PathPrefix(`/service`))"
  ```
+
+ ...and
+
+
+```yaml
+- "traefik.http.routers.management.rule=(Host(`voilib.com`) && PathPrefix(`/management`))"
+```
 
 -  There are also some references to `voilib.com` in
  [traefik.prod.toml](./production/traefik.prod.toml) that you should
@@ -71,7 +78,7 @@ Replace it also in the following lines from the `compose.yml` file
 
 -  You should change the default `SECRET_KEY` provided in
  [.env.prod.example](./production/.env.prod.example) by running the
- suggested command.
+ suggested command, and also the `ADMIN_PASSWORD`.
 
 ▶️ To build all the production images and run them, use `make prod-build`
 and `make prod-run`.
@@ -84,6 +91,10 @@ The first time you run all the services you will need to perform the
 following tasks.
 
 ###  💾 running database migrations
+
+> ℹ️ In Docker-based installations, Voilib will run migrations
+> automatically from a Docker entrypoint. You can skip this step.
+
 Voilib uses `sqlite` to store some information about podcasts and
 episodes. To ensure the database file with all the needed tables is
 created you should run the following command from [infra/ folder](./):
@@ -100,6 +111,13 @@ cd production && docker compose --env-file=.env.prod exec backend alembic upgrad
 
 
 ###  👤 creating and admin user
+
+> ℹ️ In Docker-based installations, Voilib will create automatically
+> the admin user. By default, username will be `voilib-admin` and
+> password `*audio*search*engine*`, although they can be configured
+> with environment variables. So, you can skip this step.
+
+
 Open `Swagger` at
 [http://localhost/service/docs](http://localhost/service/docs) (or in
 your own domain name if you are running in production mode) and use
@@ -116,6 +134,9 @@ There are some API endpoints that can be only used by admin users. You
 can check all the available endpoint with `Swagger`.
 
 ###  🎧 adding podcasts metadata
+
+> ℹ️ This can be also done from **Voilib Management Dashboard**.
+
 The file [urls.json](../backend/src/voilib/collection/urls.json)
 contains the list of podcast that Voilib will collect. By default it
 contains the ones offered at [voilib.com](https://voilib.com). You can
@@ -138,6 +159,8 @@ cd production && docker compose --env-file=.env.prod exec worker voilib-episodes
 ```
 
 ### 🕒 configuring periodic collect/transcript/index jobs
+
+> ℹ️ You can manually run these tasks from  **Voilib Management Dashboard**.
 
 You can use `cron` to configure **periodic jobs** that will
 **collect**, **transcript** and **index** new episodes. Here you have
