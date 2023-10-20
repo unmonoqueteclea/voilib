@@ -19,6 +19,7 @@ from voilib import models, storage
 from voilib import transcription as tr
 
 logger = logging.getLogger(__name__)
+
 Embeddings = typing.Union[list[torch.Tensor], np.ndarray, torch.Tensor]
 
 

@@ -11,7 +11,7 @@ def login_message(session_state) -> bool:
     username = session_state.get(USERNAME_KEY)
     token = session_state.get(TOKEN_KEY)
     if not username or not token:
-        st.error("👤 Unauthenticated user, please login first.")
+        st.error("👤 Unauthenticated user, please login first from Login view.")
         return False
     st.info(f"👋 Hello, {username}")
     return True

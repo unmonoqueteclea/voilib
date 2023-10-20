@@ -15,14 +15,8 @@ async def add_channel():
             """Write below the RSS feed url from a podcast and click `ADD`
             to include it in the database. """
         )
-        st.markdown(
-            """After adding a new channel, you should
-
-            """
-        )
         channel_url = st.text_input("Channel RSS feed url")
-        add_click = st.form_submit_button("Add channel", use_container_width=True)
-        if add_click:
+        if st.form_submit_button("Add channel", use_container_width=True):
             with st.spinner("⌛ Adding new channel... Please, wait."):
                 _, ch = await collection.get_or_create_channel(channel_url)
                 settings.queue.enqueue(
@@ -60,8 +54,7 @@ async def podcasts_and_episodes():
 async def main():
     st.set_page_config(page_title="Voilib", page_icon="🎧")
     st.title("📻 Media")
-    authenticated = m_utils.login_message(st.session_state)
-    if authenticated:
+    if m_utils.login_message(st.session_state):
         await add_channel()
         st.divider()
         await podcasts_and_episodes()

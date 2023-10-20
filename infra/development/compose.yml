@@ -1,4 +1,5 @@
 version: "3.9"
+name: voilib
 
 x-defaults: &defaults
   logging:
@@ -9,40 +10,6 @@ x-defaults: &defaults
   restart: unless-stopped
 
 services:
-  traefik:
-    <<: *defaults
-    image: traefik:v2.9
-    ports:
-      - 80:80  # the app is served in this port
-      - 8080:8080  # expose traefik dashboard
-    volumes:
-      - "./traefik.dev.toml:/etc/traefik/traefik.toml"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    healthcheck:
-      test: traefik healthcheck
-      interval: 10s
-      timeout: 1s
-      retries: 3
-      start_period: 10s
-
-  redis:
-    <<: *defaults
-    image: redis:7.0.4-alpine
-    hostname: ${REDIS_HOST}
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 1s
-      timeout: 3s
-      retries: 30
-
-  qdrant:
-    <<: *defaults
-    image: qdrant/qdrant:v1.1.3
-    expose:
-      - 6333
-    volumes:
-      - ../../data/qdrant/:/qdrant/storage
-
   backend:
     <<: *defaults
     image: voilib-backend:latest
@@ -56,29 +23,70 @@ services:
         condition: service_healthy
     env_file:
       - .env.dev
-    expose:
-      - 80  # we do not want to publish this port, as we will access through traefik
-    command:  uvicorn src.voilib.main:app --reload --host 0.0.0.0 --root-path /service --port 80
+    ports:
+      - 81:80
+    command:  uvicorn src.voilib.main:app --reload --host 0.0.0.0 --port 80
     volumes:
       - ../../backend/:/backend/
       - ../../data/:/data/
-    labels:
-      - "traefik.enable=true"
-      # expose the backend in the /service endpoint
-      - "traefik.http.routers.backend.rule=PathPrefix(`/service`)"
-      - "traefik.http.routers.backend.entrypoints=web"
-      - "traefik.http.routers.backend.middlewares=backend"
-      - "traefik.http.middlewares.backend.stripprefix.prefixes=/service"
-      - "traefik.port=80"
     healthcheck:
       test: ["CMD", "curl", "-f", "0.0.0.0/app/version"]
       interval: 6s
       timeout: 10s
       retries: 50
 
+  frontend:
+    <<: *defaults
+    image: voilib-ui:latest
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file:
+      - .env.dev
+    ports:
+      - 80:5173  # expose the port just internally, as we are using traefik
+    build:
+      context: ../../frontend
+      dockerfile: dockerfile.dev
+    volumes:
+      - ../../frontend/src:/frontend/src
+      - ../../frontend/public:/frontend/public
+    healthcheck:
+      test: ["CMD", "curl", "-f", "0.0.0.0:5173"]
+      interval: 6s
+      timeout: 10s
+      retries: 50
+
+  management:
+    <<: *defaults
+    image: voilib-backend:latest
+    env_file:
+      - .env.dev
+    build:
+      context: ../../backend
+      dockerfile: dockerfile
+      args:
+        INSTALL_DEV: true
+    ports:
+      - 8501:8501
+    command: streamlit run src/voilib/management/🏠-Home.py
+    volumes:
+      - ../../backend/:/backend/
+      - ../../data/:/data/
+
+  redis:
+    <<: *defaults
+    image: redis:7.0.4-alpine
+    hostname: ${REDIS_HOST}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
   worker:
     <<: *defaults
-    image: voilib-worker:latest
+    image: voilib-backend:latest
     depends_on:
       redis:
         condition: service_healthy
@@ -94,50 +102,10 @@ services:
       - ../../backend/:/backend/
       - ../../data/:/data/
 
-  management:
+  qdrant:
     <<: *defaults
-    image: voilib-worker:latest
-    env_file:
-      - .env.dev
-    build:
-      context: ../../backend
-      dockerfile: dockerfile
-      args:
-        INSTALL_DEV: true
-    ports:
-      - 8501:8501
-    command: streamlit run src/voilib/management/🏠-Home.py
-    volumes:
-      - ../../backend/:/backend/
-      - ../../data/:/data/
-
-  frontend:
-    <<: *defaults
-    image: voilib-ui:latest
-    depends_on:
-      backend:
-        condition: service_healthy
-    env_file:
-      - .env.dev
+    image: qdrant/qdrant:v1.1.3
     expose:
-      - 5173  # expose the port just internally, as we are using traefik
-    build:
-      context: ../../frontend
-      dockerfile: dockerfile.dev
+      - 6333
     volumes:
-      - ../../frontend/src:/frontend/src
-      - ../../frontend/public:/frontend/public
-      - node_modules:/frontend/node_modules/
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ui.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.ui.entrypoints=web"
-      - "traefik.port=5173"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "0.0.0.0:5173"]
-      interval: 6s
-      timeout: 10s
-      retries: 50
-
-volumes:
-  node_modules:
+      - ../../data/qdrant/:/qdrant/storage

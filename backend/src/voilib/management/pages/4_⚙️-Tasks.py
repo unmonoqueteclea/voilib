@@ -15,16 +15,18 @@ async def load_default_channels():
         """Voilib comes with a predefined list of podcasts `RSS`
         feeds.  If you import them, the system will transcribe and
         index them. This is, usually, the first task that is performed
-        in a new installation. Alternatively, you can also provide
-        your own urls for `RSS` feeds. **You should run this task only
-        once** """
+        in a new installation. **You should run this task only once**
+
+> ℹ️ Alternatively, you can also provide your own urls for `RSS`
+> feeds from [Media](./Media) page.
+
+         """
     )
-    st.info("This action may take up to 4 minutes.")
+    st.info("This action may take a few minutes.")
     with st.expander("Show the list of channels"):
         lines = [f"- {item['name']}" for item in collection.default_channels()]
         st.markdown("\n".join(lines))
-    import_default = st.button("⚙️ Import default channels", use_container_width=True)
-    if import_default:
+    if st.button("⚙️ Import default channels", use_container_width=True):
         with st.spinner("⌛ Loading default channels... Please, wait."):
             await collection.add_default_channels()
         st.success("Default list of channels correctly added")
@@ -34,17 +36,17 @@ async def update_channels():
     st.header("2. Update channel episodes")
     st.markdown(
         """After loading channels to the system, you will need to
-        **update the list of eposides of each one**. This task crawls the
+        **update the list of eposides from each one**. This task crawls the
         list of imported feeds to find new episodes (that will be
         transcribed and indexed when requested.  """
     )
+    st.info("This is a background task that may take some minutes.")
     if last_execution := utils.get_event("event_update_start"):
         last_execution_time = float(last_execution["time"])
         date = datetime.datetime.fromtimestamp(last_execution_time).strftime("%c")
         st.markdown(f"**Last execution**: `{date}`")
-    update_channels = st.button("⚙️ Update channels", use_container_width=True)
-    if update_channels:
-        settings.queue.enqueue(tasks.update_channels)
+    if st.button("⚙️ Update channels", use_container_width=True):
+        settings.queue.enqueue(tasks.update_channels, job_timeout="1h")
         st.success("Channels started to update in the background")
 
 
@@ -55,16 +57,20 @@ async def transcribe_pending():
         episodes from the last `number of days` and transcribe them in
         random order. When transcriptions finish, the episodes won't
         be ready yet for queries, you should **index** them first (see
-        next tasks). """
+        next task). """
     )
+    st.info(
+        """This is a background task that may take some hours (even
+        days) depending on the number of episodes to be transcribed."""
+    )
+
     if last_execution := utils.get_event("event_transcription_start"):
         last_execution_time = float(last_execution["time"])
         date = datetime.datetime.fromtimestamp(last_execution_time).strftime("%c")
         st.markdown(f"**Last execution**: `{date}`: {last_execution['info']}")
 
     days = st.number_input("Number of days", min_value=1, step=1)
-    start = st.button("🎧 Start transcription process", use_container_width=True)
-    if start:
+    if st.button("🎧 Start transcription process", use_container_width=True):
         total = await tasks.transcribe_episodes(days)  # type: ignore
         st.success(f"Started transcription of {total} episodes in a background process")
 
@@ -75,22 +81,29 @@ async def store_pending():
         """Trigger the process that will index all finished
         transcriptions so that users can query them """
     )
+    st.info(
+        """This is a background task that may take some hours (even
+        days) depending on the number of episodes to be indexed."""
+    )
     if last_execution := utils.get_event("event_store_start"):
         last_execution_time = float(last_execution["time"])
         date = datetime.datetime.fromtimestamp(last_execution_time).strftime("%c")
         st.markdown(f"**Last execution**: `{date}`: {last_execution['info']}")
-
-    start = st.button("💾 Start indexing process", use_container_width=True)
-    if start:
-        settings.queue.enqueue(tasks.store_episodes_embeddings)
+    if st.button("💾 Start indexing process", use_container_width=True):
+        settings.queue.enqueue(tasks.store_episodes_embeddings, job_timeout="20h")
         st.success("Started indexing in a background process")
 
 
 async def main():
     st.set_page_config(page_title="Voilib", page_icon="🎧")
     st.title("⚙️ Tasks")
-    authenticated = m_utils.login_message(st.session_state)
-    if authenticated:
+    if m_utils.login_message(st.session_state):
+        st.markdown(
+            """ This page contains all the **management tasks** to
+        handle your Voilib instance. Some of them will run
+        asynchronously in the tasks worker. If this is your first time
+        running Voilib, you should review all of them. """
+        )
         await load_default_channels()
         st.divider()
         await update_channels()

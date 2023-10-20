@@ -1,4 +1,5 @@
 version: "3.9"
+name: voilib-backend
 
 x-defaults: &defaults
   logging:
@@ -8,43 +9,6 @@ x-defaults: &defaults
       max-size: 10m
 
 services:
-  traefik:
-    <<: *defaults
-    image: traefik:v2.9
-    ports:
-      - 80:80   # the app is served in this port
-      - 443:443  # for https
-    volumes:
-      - "./traefik.prod.toml:/etc/traefik/traefik.toml"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./cert:/cert/"
-    healthcheck:
-      test: traefik healthcheck
-      interval: 10s
-      timeout: 1s
-      retries: 3
-      start_period: 10s
-    restart: unless-stopped
-
-  redis:
-    <<: *defaults
-    image: redis:7.0.4-alpine
-    hostname: ${REDIS_HOST}
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 1s
-      timeout: 3s
-      retries: 30
-    restart: unless-stopped
-
-  qdrant:
-    <<: *defaults
-    image: qdrant/qdrant:v1.1.3
-    expose:
-      - 6333
-    volumes:
-      - ../../data-production/qdrant/:/qdrant/storage
-
   backend:
     <<: *defaults
     image: voilib-backend:latest
@@ -82,24 +46,6 @@ services:
       replicas: 3
     restart: unless-stopped
 
-  worker:
-    <<: *defaults
-    image: voilib-worker:latest
-    depends_on:
-      redis:
-        condition: service_healthy
-    env_file:
-      - .env.prod
-    build:
-      context: ../../backend
-      dockerfile: dockerfile
-      args:
-        INSTALL_DEV: false
-    command: python src/voilib/worker.py
-    volumes:
-      - ../../data-production/:/data/
-    restart: unless-stopped
-
   frontend:
     <<: *defaults
     image: voilib-ui:latest
@@ -115,8 +61,7 @@ services:
       dockerfile: dockerfile.prod
       args:
         API_HOST: ${VITE_API_HOST:?err}
-    volumes:
-      - node_modules:/frontend/node_modules/
+        API_PREFIX: ${VITE_API_PREFIX:?err}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ui.rule=(Host(`voilib.com`) && PathPrefix(`/`))"
@@ -129,5 +74,76 @@ services:
       timeout: 10s
       retries: 50
 
-volumes:
-  node_modules:
+  management:
+    <<: *defaults
+    image: voilib-backend:latest
+    depends_on:
+      backend:
+        condition: service_healthy
+    env_file:
+      - .env.prod
+    ports:
+      - 8501:8501
+    command: streamlit run src/voilib/management/🏠-Home.py
+    labels:
+      - "traefik.enable=true"
+      # expose the backend in the /service endpoint
+      - "traefik.http.routers.management.rule=(Host(`voilib.com`) && PathPrefix(`/management`))"
+      - "traefik.http.routers.management.entrypoints=websecure"
+      - "traefik.http.routers.management.tls.certresolver=myresolver"
+      - "traefik.http.routers.management.middlewares=management"
+      - "traefik.http.middlewares.management.stripprefix.prefixes=/management"
+      - "traefik.port=80"
+    volumes:
+      - ../../data-production/:/data/
+
+  redis:
+    <<: *defaults
+    image: redis:7.0.4-alpine
+    hostname: ${REDIS_HOST}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  worker:
+    <<: *defaults
+    image: voilib-backend:latest
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env.prod
+    command: python src/voilib/worker.py
+    volumes:
+      - ../../data-production/:/data/
+    restart: unless-stopped
+
+  qdrant:
+    <<: *defaults
+    image: qdrant/qdrant:v1.1.3
+    expose:
+      - 6333
+    volumes:
+      - ../../data-production/qdrant/:/qdrant/storage
+
+
+  traefik:
+    <<: *defaults
+    image: traefik:v2.9
+    ports:
+      - 80:80   # the app is served in this port
+      - 443:443  # for https
+    volumes:
+      - "./traefik.prod.toml:/etc/traefik/traefik.toml"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./cert:/cert/"
+    healthcheck:
+      test: traefik healthcheck
+      interval: 10s
+      timeout: 1s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped

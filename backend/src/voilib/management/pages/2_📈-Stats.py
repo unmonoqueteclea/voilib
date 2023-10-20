@@ -5,7 +5,6 @@ import asyncio
 
 import pandas as pd
 import streamlit as st
-
 from voilib.management import utils
 from voilib.models import analytics
 
@@ -13,9 +12,7 @@ from voilib.models import analytics
 async def main():
     st.set_page_config(page_title="Voilib", page_icon="🎧")
     st.title("📈 Stats")
-    authenticated = utils.login_message(st.session_state)
-
-    if authenticated:
+    if utils.login_message(st.session_state):
         tab_last, tab_graphs = st.tabs(["Last queries", "Queries per day"])
         with tab_last:
             st.write("Last 20 queries performed by Voilib users")
@@ -39,7 +36,7 @@ async def main():
                 st.bar_chart(data=df.created_at.value_counts())
         refresh = st.button("Refresh", use_container_width=True)
         if refresh:
-            st.experimental_rerun()
+            st.rerun()
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@
 
 FROM node:19-slim as build-stage
 ARG API_HOST
+ARG API_PREFIX
 
 WORKDIR /frontend
 # we need curl for the health check
@@ -17,6 +18,7 @@ COPY ./ .
 # ensure all the env vars needed by the front-end are here before
 # running build
 ENV VITE_API_HOST=${API_HOST}
+ENV VITE_API_PREFIX=${API_PREFIX}
 RUN npm install && npm run build
 
 # production stage

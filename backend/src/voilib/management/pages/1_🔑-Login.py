@@ -6,7 +6,6 @@ import typing
 from datetime import timedelta
 
 import streamlit as st
-
 from voilib import auth
 
 st.set_page_config(page_title="Voilib", page_icon="🎧")
@@ -18,11 +17,10 @@ TOKEN_KEY = "logged_user_token"
 
 
 async def _login(username: str, password: str) -> typing.Optional[str]:
-    user = await auth.authenticate_user(username, password)
-    if user:
+    if user := await auth.authenticate_user(username, password):
+        delta = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
         return auth.create_access_token(
-            data={"sub": user.username},  # type: ignore
-            expires_delta=timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES),
+            data={"sub": user.username}, expires_delta=delta
         )
 
 
@@ -36,12 +34,11 @@ async def main():
             password = st.text_input("Password", type="password")
             clicked = st.form_submit_button("Login", use_container_width=True)
         if clicked:
-            token = await _login(username, password)
-            if token:
+            if token := await _login(username, password):
                 st.session_state[USERNAME_KEY] = username
                 st.session_state[TOKEN_KEY] = token
                 SHOW_LOGIN_FORM = False
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Invalid credentials. Please, try again")
     else:
@@ -52,7 +49,7 @@ async def main():
             del st.session_state[USERNAME_KEY]
             del st.session_state[TOKEN_KEY]
             SHOW_LOGIN_FORM = True
-            st.experimental_rerun()
+            st.rerun()
 
 
 if __name__ == "__main__":

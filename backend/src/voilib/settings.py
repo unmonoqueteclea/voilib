@@ -32,6 +32,9 @@ class Environment(enum.Enum):
 
 
 class Settings(pydantic.BaseSettings):
+    # this default variables will be used when running the system
+    # without any additional env var (usually, we will want them to be
+    # synchronized with the ones in infra/dev/.env.dev)
     environment: str = Environment.production.value
     code_dir: pydantic.DirectoryPath = CODE_DIR
     repo_dir: pydantic.DirectoryPath = REPO_DIR
