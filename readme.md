@@ -36,7 +36,7 @@ docker compose up
 ```
 
 > You will need an admin user and password. By default user
-> `voilib-admin` with password `*audio*search*engine*` will be
+> `voilib-admin` with password `*audio*search*engine` will be
 > created.
 
 After all services are up, jump to

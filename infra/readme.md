@@ -114,7 +114,7 @@ cd production && docker compose --env-file=.env.prod exec backend alembic upgrad
 
 > ℹ️ In Docker-based installations, Voilib will create automatically
 > the admin user. By default, username will be `voilib-admin` and
-> password `*audio*search*engine*`, although they can be configured
+> password `*audio*search*engine`, although they can be configured
 > with environment variables. So, you can skip this step.
 
 
