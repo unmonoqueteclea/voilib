@@ -61,6 +61,7 @@ services:
       dockerfile: dockerfile.prod
       args:
         API_HOST: ${VITE_API_HOST:?err}
+        API_PORT: ${VITE_API_PORT:?err}
         API_PREFIX: ${VITE_API_PREFIX:?err}
     labels:
       - "traefik.enable=true"

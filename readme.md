@@ -39,6 +39,11 @@ docker compose up
 > `voilib-admin` with password `*audio*search*engine` will be
 > created.
 
+> You can change default ports with environment variables:
+> - `VOILIB_MANAGEMENT_PORT` (for management page: default 8501)
+> - `VOILIB_FRONTEND_PORT` (for frontend: default 80)
+> - `VOILIB_API_PORT` (for backend: default 81)
+
 After all services are up, jump to
 [http://localhost:8501](http://localhost:8501) and follow the
 instructions to populate Voilib with content. You can also check

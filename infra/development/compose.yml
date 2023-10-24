@@ -24,7 +24,7 @@ services:
     env_file:
       - .env.dev
     ports:
-      - 81:80
+      - ${VITE_API_PORT:-81}:80
     command:  uvicorn src.voilib.main:app --reload --host 0.0.0.0 --port 80
     volumes:
       - ../../backend/:/backend/
@@ -44,7 +44,7 @@ services:
     env_file:
       - .env.dev
     ports:
-      - 80:5173  # expose the port just internally, as we are using traefik
+      - ${VOILIB_FRONTEND_PORT:-80}:5173  # expose the port just internally, as we are using traefik
     build:
       context: ../../frontend
       dockerfile: dockerfile.dev
@@ -68,7 +68,7 @@ services:
       args:
         INSTALL_DEV: true
     ports:
-      - 8501:8501
+      - ${VOILIB_MANAGEMENT_PORT:-8501}:8501
     command: streamlit run src/voilib/management/🏠-Home.py
     volumes:
       - ../../backend/:/backend/
