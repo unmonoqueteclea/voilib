@@ -10,12 +10,12 @@ import enum
 from typing import Optional
 
 import ormar
-
 from voilib.models import base
 
 
 class ChannelKind(enum.Enum):
     podcast = "podcast"
+    local = "local"
 
 
 class Language(enum.Enum):
@@ -39,6 +39,7 @@ class Channel(base.CoreModel):
     language = ormar.String(max_length=3, choices=list(Language))
     description = ormar.Text()
     url: str = ormar.String(max_length=250)  # type: ignore
+    local_folder: str = ormar.String(max_length=250)  # type: ignore
     image: str = ormar.String(max_length=500)  # type: ignore
 
 

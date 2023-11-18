@@ -4,7 +4,7 @@
 import asyncio
 
 import streamlit as st
-from voilib import collection, models, routers, settings
+from voilib import collection, models, routers, settings, tasks
 from voilib.management import utils as m_utils
 
 
@@ -29,6 +29,47 @@ async def add_channel():
             )
 
 
+async def add_local_channel():
+    st.header("Add local channel")
+    st.markdown(
+        """For each local channel you want to include, create a folder within
+   Voilib's `data/local/` folder and put there all the audio files
+   (`mp3` or `wav`) you want to be indexed.
+
+
+   Then, fill the following information for each channel."""
+    )
+    with st.form("local_channel_form_form"):
+        col1, col2 = st.columns(2)
+        with col1:
+            name = st.text_input("✏️ Channel name(*)")
+        with col2:
+            folder = st.text_input("📁 Local folder name(*)")
+        description = st.text_input("✏️ Channel description")
+        with col1:
+            image = st.text_input("🔗 URL of channel image(*)")
+        with col2:
+            language = st.selectbox("🗺️ Episodes language (*)", ("es", "en"))
+        data = {
+            "name": name,
+            "description": description,
+            "folder": folder,
+            "image": image,
+            "language": language,
+        }
+        if st.form_submit_button("Add local channel", use_container_width=True):
+            error = False
+            for k in ["name", "folder", "image", "language"]:
+                if data[k] is None or data[k] == "":
+                    st.error(f"Missing field **{k}**")
+                    error = True
+            if not error:
+                await collection.get_or_create_local_channel(data)
+                settings.queue.enqueue(tasks.update_channels, job_timeout="1h")
+                st.success(f"Channel **{data['name']}** created correctly")
+                st.success("Episodes are being updated in a background task...")
+
+
 async def podcasts_and_episodes():
     st.header("Podcasts and episodes")
 
@@ -44,8 +85,11 @@ async def podcasts_and_episodes():
     )
     with st.spinner("⌛ Loading channels..."):
         for ch in (await routers.analytics._media()).channels:
+            title = ch.title
+            if ch.kind == models.ChannelKind.local.value:
+                title = f"📁 **{title}**"
             with st.expander(
-                f"**{ch.title}**. Indexed {ch.available_episodes}/{ch.total_episodes}"
+                f"{title}. Indexed {ch.available_episodes}/{ch.total_episodes}"
             ):
                 st.image(ch.image)
                 st.markdown(ch.description)
@@ -56,6 +100,8 @@ async def main():
     st.title("📻 Media")
     if m_utils.login_message(st.session_state):
         await add_channel()
+        st.divider()
+        await add_local_channel()
         st.divider()
         await podcasts_and_episodes()
 

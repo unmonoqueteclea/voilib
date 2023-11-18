@@ -39,6 +39,7 @@ async def _media():
         channels.append(
             analytics_schemas.ChannelAnalytics(
                 title=channel.title,
+                kind=channel.kind,  # type: ignore
                 description=channel.description,  # type: ignore
                 image=channel.image,
                 url=channel.url,

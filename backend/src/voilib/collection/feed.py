@@ -14,7 +14,6 @@ from datetime import datetime
 import dateutil.parser
 import requests  # type: ignore
 import xmltodict
-
 from voilib import models
 
 IGNORE_EPISODES_TYPES: list[str] = ["bonus", "trailer"]
@@ -67,21 +66,21 @@ def _read_channel_feed(url: str) -> dict:
 def read_channel(url: str, language: typing.Optional[str] = None) -> models.Channel:
     """Read a feed url and return a channel object (not stored yet in
     db). This function won't read channel episodes, just some basic
-    metadata about channel.
+    metadata about channels.
     """
     logger.info(f"reading channel from url: {url}")
     channel_info = _read_channel_feed(url)["rss"]["channel"]
     language = language or channel_info["language"].lower()
-    channel = models.Channel(
+    return models.Channel(
         kind=models.ChannelKind.podcast.value,
         title=channel_info["title"],
         description=channel_info["description"],
         language=LANGUAGES_MAP.get(language, ""),
         url=channel_info["link"],
         feed=url,
+        local_folder="",
         image=_channel_img(channel_info),
     )
-    return channel
 
 
 def read_episodes(channel: models.Channel) -> list[models.Episode]:

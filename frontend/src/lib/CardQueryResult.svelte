@@ -33,10 +33,8 @@
       time: result.start
     });
   }
-
-
-
 </script>
+
 <div class="flex flex-col card h-auto bg-base-100 shadow-lg py-5 px-5">
   <div class="flex flex-row ml-2">
     <div class="avatar self-center" >
@@ -74,8 +72,8 @@
 	  {Math.round(result.similarity*100)}%
 	</div>
       </span>
-      <span class="hidden">
-	<div class="badge">
+      <span>
+	<div class="badge pl-1">
 	  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 mr-1">
 	    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
 	  </svg>
@@ -85,12 +83,24 @@
       {result.text}...
     </p>
   </div>
-  <button class="mt-4 btn btn-sm btn-outline" on:click={click}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
-</svg>
-    Play fragment
-  </button>
+  {#if result.channel.kind != "local"}
+    <button class="mt-4 btn btn-sm btn-outline" on:click={click}>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+	<path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+	<path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+      </svg>
+      Play fragment
+    </button>
+  {:else}
+    <div class="flex flex-row mt-6">
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+	  <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+	</svg>
+	<p class="text-xs text-slate-900">
+	  Play fragment not available for local channels
+	</p>
+      </div>
+  {/if}
+
 
 </div>

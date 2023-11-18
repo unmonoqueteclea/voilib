@@ -7,14 +7,18 @@
 import functools
 import logging
 import pathlib
+import shutil
 
 import requests  # type: ignore
 
-from voilib import settings
+from voilib import settings, storage
 from voilib.models import media
 from voilib.utils import slugify
 
 DEFAULT_EPISODES_SUFFIX: str = "mp3"
+
+LOCAL_CHANNELS_PATH = settings.settings.data_dir / "local"
+LOCAL_SOURCES_PATH = LOCAL_CHANNELS_PATH / "sources.json"
 
 logger = logging.getLogger(__name__)
 
@@ -67,8 +71,21 @@ async def transcription_file(
 async def download_episode(episode: media.Episode) -> pathlib.Path:
     """Download the audio file associated to a given episode.
 
+    If it is an episode from a local folder, it will move its
+    corresponding file to the media folder.
+
     If it already exists, just return it.
+
     """
     logger.info(f"checking if we need to download episode {episode.id}")
+    channel = await episode.channel.load()  # type: ignore
     audio = await episode_file(episode, create_channel_folder=True)
-    return audio if audio.exists() else (await fetch_file(episode.url, audio))
+    if audio.exists():
+        return audio
+    if not audio.exists():
+        if channel.local_folder != "":  # channel from local folder:
+            local_file = storage.LOCAL_CHANNELS_PATH / episode.url
+            shutil.copy(local_file, audio)
+        else:  # channel from rss feed
+            await fetch_file(episode.url, audio)
+    return audio

@@ -14,6 +14,7 @@ class ChannelAnalytics(BaseModel):
     """Schema to show some analytics about a channel."""
 
     title: str
+    kind: str
     description: str
     total_episodes: int
     image: str

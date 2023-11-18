@@ -10,8 +10,10 @@
   and return channel or episode objects (not stored yet in db)
 """
 
-from .crawler import add_default_channels  # noqa
 from .crawler import default_channels  # noqa
 from .crawler import get_or_create_channel  # noqa
+from .crawler import get_or_create_local_channel  # noqa
 from .crawler import update_channel  # noqa
+from .crawler import add_default_channels, add_local_channels  # noqa
 from .feed import read_channel, read_episodes  # noqa
+from .local import read_local_channel, read_local_episodes  # noqa
