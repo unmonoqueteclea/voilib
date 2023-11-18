@@ -87,6 +87,7 @@ async def fake_channel() -> models.Channel:
         url="foo",
         feed="foo",
         image="foo",
+        local_folder="",
     )
 
 

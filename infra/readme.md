@@ -136,6 +136,7 @@ can check all the available endpoint with `Swagger`.
 ###  🎧 adding podcasts metadata
 
 > ℹ️ This can be also done from **Voilib Management Dashboard**.
+> From there, you can also add your own audio files to Voilib.
 
 The file [urls.json](../backend/src/voilib/collection/urls.json)
 contains the list of podcast that Voilib will collect. By default it
@@ -160,7 +161,7 @@ cd production && docker compose --env-file=.env.prod exec worker voilib-episodes
 
 ### 🕒 configuring periodic collect/transcript/index jobs
 
-> ℹ️ You can manually run these tasks from  **Voilib Management Dashboard**.
+> ℹ️ You can easily run these tasks from  **Voilib Management Dashboard**.
 
 You can use `cron` to configure **periodic jobs** that will
 **collect**, **transcript** and **index** new episodes. Here you have

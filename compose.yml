@@ -4,7 +4,7 @@ name: voilib
 services:
   backend:
     # from building development compose services
-    image: docker.io/unmonoqueteclea/voilib-backend:3.0.0
+    image: docker.io/unmonoqueteclea/voilib-backend:3.1.0
     ports:
       - ${VOILIB_API_PORT:-81}:80
     command:  uvicorn src.voilib.main:app --reload --host 0.0.0.0 --port 80
@@ -18,7 +18,7 @@ services:
 
   frontend:
     # from building development compose services
-    image: docker.io/unmonoqueteclea/voilib-ui:0.5.2
+    image: docker.io/unmonoqueteclea/voilib-ui:0.5.3
     depends_on:
       backend:
         condition: service_healthy
@@ -33,7 +33,7 @@ services:
       retries: 50
 
   management:
-    image: docker.io/unmonoqueteclea/voilib-backend:3.0.0
+    image: docker.io/unmonoqueteclea/voilib-backend:3.1.0
     ports:
       - ${VOILIB_MANAGEMENT_PORT:-8501}:8501
     entrypoint: ""
@@ -51,7 +51,7 @@ services:
       retries: 30
 
   worker:
-    image: docker.io/unmonoqueteclea/voilib-backend:3.0.0
+    image: docker.io/unmonoqueteclea/voilib-backend:3.1.0
     depends_on:
       redis:
         condition: service_healthy

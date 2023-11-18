@@ -2,7 +2,8 @@
 
 Voilib offers **semantic search** in thousands of minutes of
 high-quality transcriptions of podcasts. Just type your query and it
-will find related content in thousands of episodes.
+will find related content in thousands of episodes. Voilib also allows
+users to index their own audio files.
 
 ![](https://github.com/unmonoqueteclea/voilib/actions/workflows/backend.yml/badge.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -64,7 +65,8 @@ interesting fragments for every user prompt.
   feed` that contains **metadata** about every episode and a link to
   the **audio file**. Voilib uses those feeds to **collect and store**
   that metadata from the list of podcasts configured by the
-  application admin.
+  application admin. Additionally, Voilib can also index your own
+  audio files.
 
 - **transcription**: The collected episodes are then transcribed using
   [Whisper: Open AI's Open Source Transcription
