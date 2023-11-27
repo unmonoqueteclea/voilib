@@ -8,8 +8,7 @@ from typing import Optional
 import fastapi
 from fastapi_pagination import Page
 from fastapi_pagination.ext.ormar import paginate
-
-from voilib import auth, tasks
+from voilib import auth, storage, tasks, transcription
 from voilib.collection import crawler
 from voilib.models import analytics, media, users
 from voilib.schemas import media as media_schemas
@@ -109,6 +108,21 @@ async def episodes(
     if description__icontains:
         qs = qs.filter(description__icontains=description__icontains)
     return await paginate(qs)
+
+
+@router.get(
+    "/episode/{episode_id}/transcription",
+    summary="Get the transcription of a single episode by its id",
+    response_model=media_schemas.Transcription,
+)
+async def get_episode_transcription(
+    episode_id: uuid.UUID, limit: int = 100, offset: int = 0
+) -> media_schemas.Transcription:  # type: ignore
+    episode = await media.Episode.objects.get(id=episode_id)
+    tr = transcription.read_transcription(await storage.transcription_file(episode))
+    return media_schemas.Transcription(
+        count=len(tr), offset=offset, transcription=tr[offset : offset + limit]
+    )
 
 
 @router.delete("/episode/{episode_id}", summary="Delete an episode given its id")

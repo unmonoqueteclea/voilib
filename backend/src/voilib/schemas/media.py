@@ -7,7 +7,7 @@
 import typing
 
 from pydantic import BaseModel
-
+from voilib import transcription
 from voilib.models.base import CoreModel
 from voilib.models.media import Channel, Episode
 
@@ -22,6 +22,12 @@ class ChannelIn(BaseModel):
 
 EpisodeIn = Episode.get_pydantic(exclude=set(CoreModel.__fields__.keys()))
 EpisodeOut = Episode.get_pydantic(exclude={"pk", "channel"})
+
+
+class Transcription(BaseModel):
+    count: int
+    offset: int
+    transcription: transcription.Transcription
 
 
 class QueryResponse(BaseModel):
