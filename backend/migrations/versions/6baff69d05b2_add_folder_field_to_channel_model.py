@@ -17,7 +17,10 @@ depends_on = None
 
 def upgrade() -> None:
     op.add_column(
-        "channels", sa.Column("local_folder", sa.String(length=250), nullable=False)
+        "channels",
+        sa.Column(
+            "local_folder", sa.String(length=250), nullable=False, server_default=""
+        ),
     )
 
 
