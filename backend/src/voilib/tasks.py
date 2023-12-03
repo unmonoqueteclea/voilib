@@ -11,8 +11,9 @@ from typing import Optional
 
 import qdrant_client
 import sentence_transformers
+from qdrant_client.models import Filter
 
-from voilib import collection, embedding, models, settings, transcription, vector, utils
+from voilib import collection, embedding, models, settings, transcription, utils, vector
 
 logger = logging.getLogger(__name__)
 
@@ -103,15 +104,23 @@ async def store_episodes_embeddings() -> None:
     return
 
 
-def search(text: str, num_results: int) -> list[vector.QueryResponse]:
+def search(
+    text: str, num_results: int, channel: Optional[str] = None
+) -> list[vector.QueryResponse]:
     """Main query function. Use semantic search to find content
     related to the given text in all the vector database.
 
     """
     model = embedding.load_embeddings_model(embedding.DEFAULT_EMBEDDINGS_MODEL)
+    query_filter = None
+    if channel:
+        query_filter = Filter(
+            **{"must": [{"key": "channel", "match": {"value": channel}}]}
+        )
     return vector.search(
         vector.get_configured_client(),
         embedding.text2embedding(text, model),
         vector.DEFAULT_COLLECTION,
         num_results,
+        query_filter=query_filter,
     )

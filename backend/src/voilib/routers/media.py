@@ -136,17 +136,21 @@ async def delete_episode(
 
 @router.get(
     "/query",
-    summary="Perform a new query in the whole database",
+    summary="Perform a query in the whole database (can be scoped to a single channel)",
     response_model=list[media_schemas.QueryResponse],
 )
 async def query(
     query_text: str,
     background_tasks: fastapi.BackgroundTasks,
     k: int = 6,
+    channel_id: Optional[uuid.UUID] = None,
 ):
     background_tasks.add_task(store_user_query, query_text)
     output: list[media_schemas.QueryResponse] = []
-    for r in tasks.search(query_text, k):
+    channel_pk = None
+    if channel_id:
+        channel_pk = (await media.Channel.objects.get(id=channel_id)).pk
+    for r in tasks.search(query_text, k, channel=channel_pk):
         episode = await media.Episode.objects.get(pk=r.episode)
         output.append(
             media_schemas.QueryResponse(

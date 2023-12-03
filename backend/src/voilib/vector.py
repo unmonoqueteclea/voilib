@@ -140,11 +140,13 @@ def search(
     query_embedding: embedding.Embeddings,
     collection_name: str,
     num_results: int,
+    query_filter: Optional[models.Filter] = None,
 ) -> list[QueryResponse]:
     """Perform a query with the given vector database and embeddings."""
     results = client.search(
         collection_name=collection_name,
         query_vector=query_embedding[0].tolist(),
+        query_filter=query_filter,
         limit=num_results,
     )
     return [QueryResponse(score=r.score, **r.payload) for r in results]  # type: ignore
