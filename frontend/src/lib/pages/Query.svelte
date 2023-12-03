@@ -4,6 +4,7 @@
   import Player from '../Player.svelte'
   import StretchSpinner from '../StretchSpinner.svelte'
   import {API_URL} from '../../api.js'
+  import {channels} from '../../stores.js'
   export let qs;
 
   // receive query from url
@@ -11,6 +12,7 @@
   let queryLoading = false;
   let queryResults;
 
+  let selectedChannel;
   let player;
 
   async function doQuery(query) {
@@ -20,13 +22,31 @@
       history.replaceState(history.state, "", "?q=" + query);
       let url = new URL(API_URL + "/media/query")
       let params = {query_text: query, k: 6}
+      if (selectedChannel) {
+	params.channel_id = selectedChannel
+      }
       Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
       await fetch(url).then(r => r.json()).then(data => {queryResults = data;});
       queryLoading = false
     }
   }
 
-  onMount(async () => {if (query) {await doQuery(query)}})
+  async function getChannels() {
+    if($channels.length<1) {
+      let url = new URL(API_URL + "/media/channel?size=100")
+      // TODO We should support more than 100 channels
+      await fetch(url).then(r => r.json()).then(data => {$channels = data.items;});
+    }
+  }
+
+  onMount(async () => {
+    queryLoading = true
+    await getChannels()
+    if (query) {
+      await doQuery(query)
+    }
+    queryLoading = false
+  })
 
   let episodePlay;
   let channelPlay;
@@ -54,14 +74,20 @@
 </script>
 
 <main class="flex flex-col grow pb-12 mt-6">
-  <div class="grid grid-cols-1 md:grid-cols-3 mx-5 md:mx-16 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-4 mx-5 md:mx-16 gap-4">
     <textarea
       placeholder="Write your query..."
       class="textarea textarea-bordered h-16 text-lg md:col-span-2"
       bind:value={query}
       on:keypress={goToQuery}
       rows="1"
-    />
+      />
+    <select bind:value={selectedChannel} class="select select-bordered h-16">
+      <option value={null} selected>All channels</option>
+      {#each $channels as channel }
+	<option value={channel.id}>{channel.title}</option>
+      {/each}
+    </select>
     <button class="btn h-16" on:click={doQuery(query)}>
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
 	<path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
@@ -70,23 +96,21 @@
       Search content
     </button>
   </div>
-  <div class="flex flex-row mt-6 mx-5 md:mx-16 text-gray-500">
+  <div class="mt-6 mx-5 md:mx-16 text-gray-500">
     ℹ️ Voilib will find related content in episodes
-    transcriptions. Trying to find specific podcast titles or episodes
-    names won't be useful.
+    transcriptions. Trying to find specific podcast episodes names
+    won't be useful.
   </div>
-  <div class="flex flex-row mt-2 mx-5 md:mx-16 text-gray-500">
-    📢  We are happy to receive your feedback and podcasts requests
-    <a class="underline ml-1" href="mailto: unmonoqueteclea@gmail.com"> here</a>!
+  <div class="mt-2 mx-5 md:mx-16 text-gray-500">
+    📢 We are happy to
+    <a class="underline ml-1 mr-1" href="mailto:unmonoqueteclea@gmail.com"> receive</a>
+    your feedback and podcasts requests.
   </div>
 
-  <div class="flex flex-row mt-2 mx-5 md:mx-16 text-gray-500">
-  🖤 Voilib doesn't offer any paid service. Help me ensure the
- continued availability and accessibility of it
-  by
-  <a target="_blank" class="underline ml-1 font-bold"
-  href="https://ko-fi.com/unmonoqueteclea">supporting me through
-  donations</a>.
+  <div class="mt-2 mx-5 md:mx-16 text-gray-500">
+    🖤 Voilib doesn't offer any paid service.
+    <a target="_blank" class="underline ml-1 mr-1" href="https://ko-fi.com/unmonoqueteclea">Help me</a>
+    ensure the continued availability and accessibility of it.
   </div>
 
   <div class="flex flex-row place-content-center mt-1 mx-5 md:mx-16">
