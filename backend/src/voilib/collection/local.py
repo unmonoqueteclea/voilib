@@ -25,7 +25,7 @@ def read_local_channel(info: dict) -> models.Channel:
         kind=models.ChannelKind.local.value,
         description=info.get("description", ""),
         language=info["language"],
-        url="",
+        url=info["folder"],
         feed="",
         local_folder=info["folder"],
         image=info.get("image", ""),
@@ -42,11 +42,13 @@ def read_local_episodes(channel: models.Channel) -> list[models.Episode]:
     channel_folder = storage.LOCAL_CHANNELS_PATH / channel.local_folder
     mp3_files = list(channel_folder.glob("*.mp3"))
     wav_files = list(channel_folder.glob("*.wav"))
+    m4a_files = list(channel_folder.glob("*.m4a"))
     episodes: list[models.Episode] = []
-    for ep in mp3_files + wav_files:
+    for ep in mp3_files + wav_files + m4a_files:
         uri = f"{channel.local_folder}/{ep.name}"
         episode = models.Episode(
             title=ep.name,
+            filename=ep.name,
             guid=uri,
             description="",
             # take date from audio file metadata

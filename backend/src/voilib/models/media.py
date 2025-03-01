@@ -63,6 +63,7 @@ class Episode(base.CoreModel):
         ondelete=ormar.ReferentialAction.CASCADE,
     )
     title: str = ormar.String(max_length=250)  # type: ignore
+    filename: str = ormar.String(max_length=250) # type: ignore
     description: str = ormar.Text()  # type: ignore
     date = ormar.DateTime(timezone=True, nullable=True)
     guid = ormar.Text()  # episode guid at origin

@@ -13,6 +13,7 @@ import logging
 import typing
 import xml
 from datetime import datetime
+import re
 
 import dateutil.parser
 import requests  # type: ignore
@@ -58,6 +59,8 @@ def _episode_duration(duration: typing.Optional[str]) -> int:
         return int(hours) * 3600 + int(minutes) * 60 + int(secs)
     return int(duration)
 
+def _episode_filename_from_url(url: str) -> str:
+    return re.match("\/([^\/]+)$", url)
 
 def _episode_guid(guid: typing.Union[dict, str]) -> str:
     return guid["#text"] if isinstance(guid, dict) else guid
@@ -103,12 +106,14 @@ def read_episodes(channel: models.Channel) -> list[models.Episode]:
         if ep.get("itunes:episodeType", None) not in ["bonus", "trailer"]:
             title = ep.get("title", None)
             if title:
+                url=ep["enclosure"]["@url"]
                 episode = models.Episode(
                     title=title,
+                    filename=_episode_filename_from_url(url),
                     guid=_episode_guid(ep["guid"]),
                     description=ep.get("description", "") or "",
                     date=_episode_date(ep["pubDate"]),
-                    url=ep["enclosure"]["@url"],
+                    url=url,
                     episode=int(ep.get("itunes:episode", -1)),
                     season=int(ep.get("itunes:season", -1)),
                     duration=_episode_duration(ep.get("itunes:duration", None)),
