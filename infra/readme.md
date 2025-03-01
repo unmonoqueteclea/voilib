@@ -1,19 +1,18 @@
 # 🎧 Voilib Deployment
 This folder contains all the infrastructure code needed to run
 **Voilib**.  It uses some Docker-based services configured with a
-`Docker Compose` file (that is different in development and in
-production).
+`Docker Compose` file (different in development and in production).
 
 > The main commands to build and run all the needed services are in
 > the provided [makefile](./makefile). Run `make` from [infra/
 > folder](./) to see all of them (although you should read all this
 > guide first).
 
-## in development mode...
+## In development mode...
 In development mode (see [development/ folder](./development))
 frontend and backend code is using a [bind
 mount](https://docs.docker.com/storage/bind-mounts/) so that you don't
-need to rebuild the Docker images every time you change something in
+need to rebuild the `Docker` images every time you change something in
 the code.
 
 - The [compose.yml](./development/compose.yml) file expects a
@@ -30,28 +29,20 @@ compose build`) and run all of them with `make dev-run` (it performs a
 - Application **frontend** at [http://localhost](http://localhost)
   (although it won't be ready yet for queries)
 - **Management Dashboard** at [http://localhost:8501](http://localhost:8501)
-  (although it won't be ready yet for queries)
-- **REST API** at
-  [http://localhost/service/](http://localhost/service/) with
-  `Swagger` docs at
-  [http://localhost/service/docs](http://localhost/service/docs)
-- `Traefik` dashboard at
-  [http://localhost:8080](http://localhost:8080). Traefik is used as a
-  **reverse proxy server**.
-- `Qdrant` (vector database) running at
-  [http://qdrant:6333](http://qdrant:6333) (from the internal Docker
-  network)
-
+- **REST API** at [http://localhost:81/service/](http://localhost:81/service/)
+  with  `Swagger` docs at
+  [http://localhost:81/service/docs](http://localhost:81/service/docs)
+- `Qdrant` (vector database) running at [http://qdrant:6333](http://qdrant:6333)
+  (from the internal Docker network)
 
 ℹ️ Now read [first-run tasks section](#first-run-tasks) to find how to
  configure and start adding content to the application.
 
-## in production...
+## In production...
 - As in development (read [that section](#in-development-mode) first),
 **you must create a `.env.prod` file** in the
 [./production/](./production) folder from the provided example:
 [.env.prod.example](./production/.env.prod.example)
-
 
 - When you do it, ensure to use your own domain in `VITE_API_HOST`.
 Replace it also in the following lines from the `compose.yml` file
@@ -86,11 +77,11 @@ and `make prod-run`.
 ℹ️ Now read [first-run tasks section](#first-run-tasks) to find how to
  configure and start adding content to the application.
 
-## first run tasks
+## First run tasks
 The first time you run all the services you will need to perform the
 following tasks.
 
-###  💾 running database migrations
+###  💾 Running database migrations
 
 > ℹ️ In Docker-based installations, Voilib will run migrations
 > automatically from a Docker entrypoint. You can skip this step.
@@ -110,7 +101,7 @@ cd production && docker compose --env-file=.env.prod exec backend alembic upgrad
 ```
 
 
-###  👤 creating and admin user
+###  👤 Creating and admin user
 
 > ℹ️ In Docker-based installations, Voilib will create automatically
 > the admin user. By default, username will be `voilib-admin` and
@@ -118,13 +109,10 @@ cd production && docker compose --env-file=.env.prod exec backend alembic upgrad
 > with environment variables. So, you can skip this step.
 
 
-Open `Swagger` at
-[http://localhost/service/docs](http://localhost/service/docs) (or in
-your own domain name if you are running in production mode) and use
-the `/users/signup` endpoint to register a new user. You can use
-whatever email or password you want but, to ensure the user is
-automatically recognized as an admin, you should use the username
-**`voilib-admin`**.
+Open `Swagger` at and use the `/users/signup` endpoint to register a
+new user. You can use whatever email or password you want but, to
+ensure the user is automatically recognized as an admin, you should
+use the username **`voilib-admin`**.
 
 > ℹ️ There is a setting with the name `admin_username` to tell
 > `FastAPI` the username we want to be automatically promoted to admin
@@ -133,17 +121,17 @@ automatically recognized as an admin, you should use the username
 There are some API endpoints that can be only used by admin users. You
 can check all the available endpoint with `Swagger`.
 
-###  🎧 adding podcasts metadata
+###  🎧 Adding podcasts metadata
 
 > ℹ️ This can be also done from **Voilib Management Dashboard**.
 > From there, you can also add your own audio files to Voilib.
 
 The file [urls.json](../backend/src/voilib/collection/urls.json)
 contains the list of podcast that Voilib will collect. By default it
-contains the ones offered at [voilib.com](https://voilib.com). You can
-change this list and add the feeds from all the podcasts you want. I
-usually use [listennotes.com](https://www.listennotes.com) to find the
-URLs of the RSS feeds of my favorite podcasts.
+contains some examples of popular podcast. You can change this list
+and add the feeds from all the podcasts you want. I usually use
+[listennotes.com](https://www.listennotes.com) to find the URLs of the
+RSS feeds of my favorite podcasts.
 
 The following command (run it from from [infra/ folder](./)) will
 start collecting episodes from all the configured feeds:
@@ -159,7 +147,7 @@ cd development && docker compose --env-file=.env.dev exec worker voilib-episodes
 cd production && docker compose --env-file=.env.prod exec worker voilib-episodes --update
 ```
 
-### 🕒 configuring periodic collect/transcript/index jobs
+### 🕒 Configuring periodic collect/transcript/index jobs
 
 > ℹ️ You can easily run these tasks from  **Voilib Management Dashboard**.
 

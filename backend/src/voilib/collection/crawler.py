@@ -1,10 +1,12 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
+# Copyright (c) 2022-2024 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Main high-level data collection related functions.
 
 It offers functions to retrieve poscast channels and episodes.
 """
+
+from __future__ import annotations
 
 import importlib.resources
 import json
@@ -25,8 +27,8 @@ def default_channels() -> list[dict]:
 
 
 async def get_or_create_channel(
-    feed_url: str, language: Optional[str] = None
-) -> tuple[bool, models.Channel]:
+    feed_url: str, language: str | None = None
+) -> tuple[bool, models.Channel | None]:
     """Read a feed url and return its corresponding channel object,
     creating it if needed or retrieving it from the database if it
     already exists.
@@ -38,7 +40,8 @@ async def get_or_create_channel(
     if ch is None:
         created = True
         logger.info(f"creating the channel from url {feed_url}...")
-        ch = await feed.read_channel(feed_url, language).save()
+        ch = feed.read_channel(feed_url, language)
+        ch = await ch.save() if ch else None
     return created, ch
 
 
@@ -55,8 +58,8 @@ async def add_default_channels() -> int:
         url = podcast["url"]
         lang = podcast.get("language", None)
         logger.info(f"get or create channel {url}, lang {lang}")
-        created, _ = await get_or_create_channel(podcast["url"], lang)
-        total += 1 if created else 0
+        created, channel = await get_or_create_channel(podcast["url"], lang)
+        total += 1 if created and channel else 0
     logger.info(f"finished adding default channels: {total}")
     return total
 

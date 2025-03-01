@@ -1,9 +1,10 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
+# Copyright (c) 2022-2024 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 import asyncio
 
 import streamlit as st
+
 from voilib import collection, models, routers, settings, tasks
 from voilib.management import utils as m_utils
 
@@ -19,14 +20,16 @@ async def add_channel():
         if st.form_submit_button("Add channel", use_container_width=True):
             with st.spinner("⌛ Adding new channel... Please, wait."):
                 _, ch = await collection.get_or_create_channel(channel_url)
-                settings.queue.enqueue(
-                    collection.update_channel, ch, job_timeout="600m"
-                )
-            st.success(
-                f"""Channel "{ch.title}" correctly added to the
-                database.  Its episodes are being updated in a
-                background task. This process can take a few minutes."""
-            )
+                if ch:
+                    settings.queue.enqueue(
+                        collection.update_channel, ch, job_timeout="600m"
+                    )
+                    st.success(
+                        f"""Channel "{ch.title}" correctly added to
+                        the database.  Its episodes are being updated
+                        in a background task. This process can take a
+                        few minutes."""
+                    )
 
 
 async def add_local_channel():

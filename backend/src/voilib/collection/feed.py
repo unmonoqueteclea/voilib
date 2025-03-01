@@ -1,4 +1,4 @@
-# Copyright (c) 2022-2023 Pablo González Carrizo (unmonoqueteclea)
+# Copyright (c) 2022-2024 Pablo González Carrizo (unmonoqueteclea)
 # All rights reserved.
 
 """Utilities to parse podcasts RSS feeds
@@ -7,13 +7,17 @@ Functions from this module return Channel or Episode objects, but they
 don't interact with the database.
 """
 
+from __future__ import annotations
+
 import logging
 import typing
+import xml
 from datetime import datetime
 
 import dateutil.parser
 import requests  # type: ignore
 import xmltodict
+
 from voilib import models
 
 IGNORE_EPISODES_TYPES: list[str] = ["bonus", "trailer"]
@@ -59,28 +63,33 @@ def _episode_guid(guid: typing.Union[dict, str]) -> str:
     return guid["#text"] if isinstance(guid, dict) else guid
 
 
-def _read_channel_feed(url: str) -> dict:
-    return xmltodict.parse(requests.get(url).content)
+def _read_channel_feed(url: str) -> dict | None:
+    try:
+        channel_info = xmltodict.parse(requests.get(url).content)
+    except xml.parsers.expat.ExpatError:
+        channel_info = None
+    return channel_info
 
 
-def read_channel(url: str, language: typing.Optional[str] = None) -> models.Channel:
+def read_channel(url: str, language: str | None = None) -> models.Channel | None:
     """Read a feed url and return a channel object (not stored yet in
     db). This function won't read channel episodes, just some basic
     metadata about channels.
     """
     logger.info(f"reading channel from url: {url}")
-    channel_info = _read_channel_feed(url)["rss"]["channel"]
-    language = language or channel_info["language"].lower()
-    return models.Channel(
-        kind=models.ChannelKind.podcast.value,
-        title=channel_info["title"],
-        description=channel_info["description"],
-        language=LANGUAGES_MAP.get(language, ""),
-        url=channel_info["link"],
-        feed=url,
-        local_folder="",
-        image=_channel_img(channel_info),
-    )
+    if parsed_channel := _read_channel_feed(url):
+        channel_info = parsed_channel["rss"]["channel"]
+        language = language or channel_info["language"].lower()
+        return models.Channel(
+            kind=models.ChannelKind.podcast.value,
+            title=channel_info["title"],
+            description=channel_info["description"],
+            language=LANGUAGES_MAP.get(language, ""),
+            url=channel_info["link"],
+            feed=url,
+            local_folder="",
+            image=_channel_img(channel_info),
+        )
 
 
 def read_episodes(channel: models.Channel) -> list[models.Episode]:

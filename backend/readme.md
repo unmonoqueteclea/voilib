@@ -6,7 +6,7 @@ Backend and API of **Voilib**, written in Python using
 
 For development, install the project locally with `pip install -e
 .[dev]` to ensure you use editable mode. Development dependencies such
-as `ruff`, `black` or `pytest` will be also installed when you use
+as `ruff` or `pytest` will be also installed when you use
 that command.
 
 ℹ️ You should read very carefully the main [readme](../readme.md) and
